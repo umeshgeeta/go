@@ -1,5 +1,12 @@
 // author: Umesh Patil
 // March 2020
+
+// The program builds a binary tree based on insertions done. The level
+// where root resides is designated as '1', next at '2' and so forth.
+// If height of the binary tree is 'h'; there will be h levels in the tree.
+//
+// It prints the binary tree on console as a pyramid. It computes
+// spaces so that the pyramid is depicted as closely as possible.
 package bt
 
 import (
@@ -42,6 +49,7 @@ func New(h int) *Bt {
 // Methods - Exposed
 // *************************************
 
+// Simply inserts the given value at the specified index.
 func (bt* Bt) Insert(index int, value int){
 	if index < 0 || index >= len(bt.Nodes) {
 		fmt.Printf("Index %d is invalid for binary tree with height %d", index, bt.Height)
@@ -52,6 +60,8 @@ func (bt* Bt) Insert(index int, value int){
 	}
 }
 
+// Returns the pyramid string which can be printed.
+// Gaps are called as tiles. Numbers are padded to maximum value so as alignment works.
 func (bt Bt) Pyramid() string {
 	result := ""
 	tpr := tilesPerRow(bt.Height)
@@ -66,6 +76,7 @@ func (bt Bt) Pyramid() string {
 // Methods - Not Exposed
 // *************************************
 
+// Fills the row for the given level
 func (bt Bt) fillRow(level int, td []int) string {
 	result := ""
 	nodesInLevel := numPerLevel(level)
@@ -81,6 +92,7 @@ func (bt Bt) fillRow(level int, td []int) string {
 	return result
 }
 
+// Pad the value at a node so as it aligns to the value with maximum digits.
 func (bt Bt) padNode(index int, additional int) string {
 	return pad(bt.Nodes[index], bt.maxNodeLength(), additional)
 }
@@ -93,6 +105,8 @@ func (bt Bt) nodeCount() int {
 	return int(math.Pow(2, float64(bt.Height))) - 1
 }
 
+// Indicates how many node - values - can be maximum in a row,
+// that row is the last row or the last level.
 func (bt Bt) maxNodesInARow() int {
 	return numPerLevel(bt.Height)
 }
@@ -114,6 +128,13 @@ func indices(l int) (int, int){
 	return start, end
 }
 
+// We pad the value to max. digit length, plus additionally
+// more padding because the number of values at that level will
+// be less than the maximum. For a binary tree with height 4,
+// the last row / level will have 8 numbers which second last
+// will have only 4 numbers. So the padding for those 4 additional
+// numbers on the last row needs to be distributed among 4 numbers
+// when we deal with padding of numbers on level 3.
 func pad(num int, ps int, additional int) string {
 	ns := strconv.Itoa(num)
 	d := len(ns)
@@ -152,6 +173,12 @@ func tilesPerRow(height int) int {
 	return (int(math.Pow(2, float64(height)))) - 2
 }
 
+// Method returns tile distribution for a row of the specified level.
+// Key thing to understand is 'second row' in a binary tree of depth /
+// height 4 will have different count of tiles compared to the same
+// 'second row' in a binary tree of depth 8. That is because the last
+// row will have more numbers for a taller binary tree and we want to
+// start with 2 tile separation between 2 numbers at the bottom row.
 func tileDist(tileNum int, level int, btHeight int) []int {
 	tileSeg := int(math.Pow(2, float64(level-1))) + 1
 	result := make([]int, tileSeg)

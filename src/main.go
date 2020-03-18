@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-// Tests binary tree
+// Tests binary tree pyramid printing.
 func main() {
 
 	bt2 := bt.New(3)
