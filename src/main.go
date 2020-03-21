@@ -16,6 +16,11 @@ func main() {
 	m[3] = 78
 	bt1 := buildBinaryTree(m)
 	fmt.Println(bt1.Pyramid())
+
+	//Expected ouput:
+	//                 250
+	//      134                   nil
+	// 78         nil        nil        nil
 }
 
 func buildBinaryTree(val map[int]int) bt.Bt {

@@ -5,9 +5,9 @@
 // where root resides is designated as '1', next at '2' and so forth.
 // If height of the binary tree is 'h'; there will be h levels in the tree.
 //
-//
 // It prints the binary tree on console as a pyramid. It computes
 // spaces so that the pyramid is depicted as closely as possible.
+
 package bt
 
 import (
@@ -22,6 +22,10 @@ import (
 // *************************************
 // Struct & Constant definitions
 // *************************************
+
+// Interface to define what type of nodes are acceptable in the binary tree:
+// any value such we can compare two instances of that value.
+// Other method of the interface are utility methods.
 type Comparable interface {
 	// if 'this' equals c2:	returns 0
 	// if 'this' is greater than c2: returns 1
@@ -36,15 +40,19 @@ type Comparable interface {
 	Str() string
 }
 
+// Intener implementation of the interface used for testing purposes.
 type NumVal struct {
 	Val int
 }
 
+// Binary tree structure
 type Bt struct {
 	Root *Node
 	NodeCount int
 }
 
+// What each node of the binary tree would look like:
+// pointers to parent and children; value and depths of children subtrees.
 type Node struct {
 	Value Comparable
 	Parent *Node
@@ -61,11 +69,14 @@ const TileChar = " "
 // *************************************
 // Constructor
 // *************************************
+
+// Basic constructor
 func NewBt() *Bt {
 	bt := new(Bt)
 	return bt
 }
 
+// Root is given for the tree to be build.
 func NewBtWithRoot(rv Comparable) *Bt {
 	bt := new(Bt)
 	root := Node {rv, nil, nil, nil, 0, 0}
@@ -73,6 +84,7 @@ func NewBtWithRoot(rv Comparable) *Bt {
 	return bt
 }
 
+// Utility constructor
 func NewBtWithNumValRoot(val int) *Bt {
 	nv := NumVal{val}
 	return NewBtWithRoot(nv)
@@ -101,10 +113,12 @@ func (nv NumVal) Compare(c2 Comparable) (int, error) {
 	return result, err
 }
 
+// Interface method implementation
 func (nv NumVal) Len() int {
 	return len(nv.Str())
 }
 
+// Interface method implementation
 func (nv NumVal) Str() string {
 	return strconv.Itoa(nv.Val)
 }
@@ -171,6 +185,7 @@ func (bt* Bt) SetChild(node *Node, parent *Node, lr int) error {
 	return err
 }
 
+// Set the given node at the specified index in the tree. As mentioned indices are as in BFS.
 func (bt* Bt) SetNode(index int, node *Node) error {
 	var err error
 	path := GetPath(index)
@@ -218,6 +233,8 @@ func (bt* Bt) SetNode(index int, node *Node) error {
 	return err
 }
 
+// Utility method where we wrap the value into NumVal Node and add to the tree
+// at the given index.
 func (bt* Bt) Insert(index int, val int) error {
 	n := NumVal{val}
 	nd := Node{
@@ -231,6 +248,7 @@ func (bt* Bt) Insert(index int, val int) error {
 	return bt.SetNode(index, &nd)
 }
 
+// Height of the tree
 func (bt Bt) Height() int {
 	h := 0
 	if bt.Root != nil {
@@ -351,19 +369,13 @@ func (bt Bt) maxNodesInARow() int {
 	return numPerLevel(bt.Height())
 }
 
-//func (bt Bt) setChild(parent int, childIndex int, childVal int) bool {
-//	result := false
-//	if childIndex < bt.nodeCount() {
-//		bt.Insert(childIndex,childVal)
-//		result = true
-//	}
-//	return result
-//}
-
 // *************************************
 // Functions - Exposed
 // *************************************
 
+// For the given index in an hypothetical binary tree,
+// it returns the path from root in terms of whether
+// you pick the Left Child or Right Child.
 func GetPath(index int) *list.List {
 	l := list.New()
 	i := index
