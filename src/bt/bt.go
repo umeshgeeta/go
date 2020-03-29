@@ -80,7 +80,7 @@ func NewBt() *Bt {
 func NewBtWithRoot(rv Comparable) *Bt {
 	bt := new(Bt)
 	root := Node {rv, nil, nil, nil, 0, 0}
-	bt.SetChild(&root, nil, 0)
+	bt.SetChild(&root, nil, 0, false)
 	return bt
 }
 
@@ -130,13 +130,13 @@ func (node* Node) ChangeDepth(byWhat int, whichChild int) {
 		node.LeftDepth += byWhat
 		if node.Parent != nil {
 			// recursive call
-			node.Parent.ChangeDepth(byWhat, whichChild)
+			node.Parent.ChangeDepth(byWhat, node.Parent.whichChild(*node))
 		}
 	} else if whichChild == 0 {
 		node.RightDept += byWhat
 		if node.Parent != nil {
 			// recursive call
-			node.Parent.ChangeDepth(byWhat, whichChild)
+			node.Parent.ChangeDepth(byWhat, node.Parent.whichChild(*node))
 		}
 	} else {
 		log.Fatal(fmt.Sprintf("Wrong depth argument %d for increaseDepth call", whichChild))
@@ -147,7 +147,7 @@ func (node* Node) ChangeDepth(byWhat int, whichChild int) {
 // Argument lr indicates whether to set this node as left child (lr == 0)or
 // right child (lr == 1) of the parent. When parent is nil, we treat
 // invocation of the method as to set the root in which case argument lr is ignored.
-func (bt* Bt) SetChild(node *Node, parent *Node, lr int) error {
+func (bt* Bt) SetChild(node *Node, parent *Node, lr int, push bool) error {
 	var err error
 	err = nil
 	// if parent is nil and the tree does not have any root, we can place the node at the root
@@ -167,18 +167,36 @@ func (bt* Bt) SetChild(node *Node, parent *Node, lr int) error {
 				parent.RightChild = node
 				node.Parent = parent
 				bt.NodeCount++
-				node.ChangeDepth(1, 0)
+				parent.ChangeDepth(1, 0)
 			} else {
-				err = errors.New("Right child already exists, cannot set.")
+				if push {
+					subtree := parent.RightChild
+					parent.RightChild = node
+					node.Parent = parent
+					parent.ChangeDepth(1,0)
+					node.RightChild = subtree
+					node.RightDept = subtree.RightDept + 1
+				} else {
+					err = errors.New("Right child already exists, cannot set.")
+				}
 			}
 		case 1:
 			if parent.LeftChild == nil {
 				parent.LeftChild = node
 				node.Parent = parent
-				node.ChangeDepth(1, 1)
 				bt.NodeCount++
+				parent.ChangeDepth(1, 1)
 			} else {
-				err = errors.New("Left child already exists, cannot set.")
+				if push {
+					subtree := parent.LeftChild
+					parent.LeftChild = node
+					node.Parent = parent
+					parent.ChangeDepth(1,1)
+					node.LeftChild = subtree
+					node.LeftDepth = subtree.LeftDepth + 1
+				} else {
+					err = errors.New("Left child already exists, cannot set.")
+				}
 			}
 		}
 	}
@@ -223,7 +241,7 @@ func (bt* Bt) SetNode(index int, node *Node) error {
 				// else the last level is where the node is to be placed actually
 			}
 			// we set it as the Child
-			bt.SetChild(node, parent, child)
+			bt.SetChild(node, parent, child, false)
 		} else {
 			err = errors.New("Invalid path, did not find expected root node at the start")
 		}
@@ -325,6 +343,17 @@ func (bt Bt) Pyramid() string {
 // *************************************
 // Methods - Not Exposed
 // *************************************
+
+// Returned values: 0 - Right Child 1 - Left Child
+func (node* Node) whichChild(child Node) int {
+	wc := -2	// on purpose different than 1, 0 and -1
+	if node.LeftChild != nil && *node.LeftChild == child {
+		wc = 1
+	} else if node.RightChild != nil && *node.RightChild == child {
+		wc = 0
+	}
+	return wc
+}
 
 // Fills the row for the given level
 func (bt Bt) fillRow(level int, td []int, bfs list.List, where *list.Element, maxlen int) (string, *list.Element) {

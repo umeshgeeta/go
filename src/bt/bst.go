@@ -7,6 +7,8 @@
 
 package bt
 
+import "fmt"
+
 // *************************************
 // Struct & Constant definitions
 // *************************************
@@ -37,19 +39,20 @@ func (bst* Bst)Insert(val int) error {
 		LeftDepth:  0,
 		RightDept:  0,
 	}
-	var err error
-	err = nil
+	var err error = nil
 	if bst.Root == nil {
 		nd.LeftDepth = 0
 		nd.RightDept = 0
 		bst.Root = &nd
 		bst.NodeCount = 1
 	} else {
-		parent, whichChild, err := bst.findParent(bst.Root, n)
-		if err != nil {
-			return err
+		parent, whichChild, er := bst.findParent(bst.Root, n)
+		if er == nil {
+			// if a node is already there, move it down to make room
+			// for this incoming node
+			er = bst.SetChild(&nd, parent, whichChild, true)
 		}
-		err = bst.SetChild(&nd, parent, whichChild)
+		err = er
 	}
 	return err
 }
@@ -61,14 +64,21 @@ func (bst* Bst)Insert(val int) error {
 func (bst* Bst) findParent(root *Node, incoming Comparable) (*Node, int, error) {
 	node := root
 	var comparison, err = node.Value.Compare(incoming)
+	fmt.Printf("node: %s incoming: %s comparison: %d\n", node.Value.Str(), incoming.Str(), comparison)
 	if  err == nil {
 		switch comparison {
-		case 0, 1:
+		case 0:
+			// incoming is same as the root, we need to change the Left child
+			// difference with 'case 1' is we are not concerned whether there
+			// is a Left child or not
+			return node, 1, nil
+		case 1:
 			if node.LeftChild != nil {
 				return bst.findParent(node.LeftChild, incoming)
 			} else {
 				return node, 1, nil
 			}
+
 		case -1:
 			if node.RightChild != nil {
 				return bst.findParent(node.RightChild, incoming)
