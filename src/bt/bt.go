@@ -14,7 +14,6 @@ import (
 	"container/list"
 	"errors"
 	"fmt"
-	"log"
 	"math"
 	"strconv"
 )
@@ -123,23 +122,38 @@ func (nv NumVal) Str() string {
 	return strconv.Itoa(nv.Val)
 }
 
+func (node Node) GetMaxDepth() int {
+	return int(math.Max(float64(node.LeftDepth), float64(node.RightDept)))
+}
+
 // byWhat: It can be +1 or -1 or some other when the entire subtree is appended or chopped off
 // whichChild: 1 for Left Child and 0: for Right Child
 func (node* Node) ChangeDepth(byWhat int, whichChild int) {
-	if whichChild == 1 {
-		node.LeftDepth += byWhat
-		if node.Parent != nil {
-			// recursive call
-			node.Parent.ChangeDepth(byWhat, node.Parent.whichChild(*node))
-		}
-	} else if whichChild == 0 {
-		node.RightDept += byWhat
-		if node.Parent != nil {
-			// recursive call
-			node.Parent.ChangeDepth(byWhat, node.Parent.whichChild(*node))
-		}
-	} else {
-		log.Fatal(fmt.Sprintf("Wrong depth argument %d for increaseDepth call", whichChild))
+	switch whichChild {
+	case 0: {
+				node.RightDept += byWhat
+				if node.Parent != nil {
+					// recursive call
+					wc := node.Parent.whichChild(node)
+					if wc == 0 || wc == 1 {
+						node.Parent.ChangeDepth(byWhat, wc)
+					}
+				}
+			}
+	case 1: {
+				node.LeftDepth += byWhat
+				if node.Parent != nil {
+					// recursive call
+					wc := node.Parent.whichChild(node)
+					if wc == 0 || wc == 1 {
+						node.Parent.ChangeDepth(byWhat, wc)
+					}
+				}
+			}
+	default: {
+				fmt.Printf("Unexpected child value: %d %v\n", whichChild, node)
+			}
+
 	}
 }
 
@@ -175,7 +189,7 @@ func (bt* Bt) SetChild(node *Node, parent *Node, lr int, push bool) error {
 					node.Parent = parent
 					parent.ChangeDepth(1,0)
 					node.RightChild = subtree
-					node.RightDept = subtree.RightDept + 1
+					node.RightDept = int(math.Max(float64(subtree.RightDept), float64(subtree.LeftDepth)) + 1)
 				} else {
 					err = errors.New("Right child already exists, cannot set.")
 				}
@@ -193,7 +207,7 @@ func (bt* Bt) SetChild(node *Node, parent *Node, lr int, push bool) error {
 					node.Parent = parent
 					parent.ChangeDepth(1,1)
 					node.LeftChild = subtree
-					node.LeftDepth = subtree.LeftDepth + 1
+					node.LeftDepth = int(math.Max(float64(subtree.RightDept), float64(subtree.LeftDepth)) + 1)
 				} else {
 					err = errors.New("Left child already exists, cannot set.")
 				}
@@ -296,15 +310,17 @@ func (bt Bt) Bfs() (list.List, int) {
 				if pn != nil {
 					chl = pn.LeftChild
 					chr = pn.RightChild
-					ln := pn.Value.Len()
-					if maxlen < ln {
-						maxlen = ln
+					if pn.Value != nil {
+						ln := pn.Value.Len()
+						if maxlen < ln {
+							maxlen = ln
+						}
 					}
 				} else {
 					chl = &Node{nil, nil,nil,nil,0, 0}
 					chr = &Node{nil, nil,nil,nil,0, 0}
-					l.PushBack(chl)
-					l.PushBack(chr)
+					//l.PushBack(chl)
+					//l.PushBack(chr)
 				}
 				l.PushBack(chl)
 				l.PushBack(chr)
@@ -325,7 +341,7 @@ func (bt Bt) Bfs() (list.List, int) {
 
 // Returns the pyramid string which can be printed.
 // Gaps are called as tiles. Numbers are padded to maximum value so as alignment works.
-func (bt Bt) Pyramid() string {
+func (bt Bt) Pyramid(id bool) string {
 	result := ""
 	th := bt.Height()
 	tpr := tilesPerRow(th)
@@ -333,30 +349,44 @@ func (bt Bt) Pyramid() string {
 	where := bfs.Front()
 	for level := 1; level <= th; level++ {
 		td := tileDist(tpr, level, th)
-		str, wh :=  bt.fillRow(level, td, bfs, where, maxl)
+		str, wh :=  bt.fillRow(level, td, bfs, where, maxl, id)
 		result  = result + str + "\n"
 		where = wh
 	}
 	return result
 }
 
+func (bt Bt) Inorder() string {
+	return inorderRecursive(bt.Root)
+}
+
 // *************************************
 // Methods - Not Exposed
 // *************************************
 
+func inorderRecursive(node *Node) string {
+	result := ""
+	if node != nil {
+		result = inorderRecursive(node.LeftChild)
+		result = result + " " + node.Value.Str() + " "
+		result = result + inorderRecursive(node.RightChild)
+	}
+	return result
+}
+
 // Returned values: 0 - Right Child 1 - Left Child
-func (node* Node) whichChild(child Node) int {
+func (node* Node) whichChild(child *Node) int {
 	wc := -2	// on purpose different than 1, 0 and -1
-	if node.LeftChild != nil && *node.LeftChild == child {
+	if node.LeftChild != nil && node.LeftChild == child {
 		wc = 1
-	} else if node.RightChild != nil && *node.RightChild == child {
+	} else if node.RightChild != nil && node.RightChild == child {
 		wc = 0
 	}
 	return wc
 }
 
 // Fills the row for the given level
-func (bt Bt) fillRow(level int, td []int, bfs list.List, where *list.Element, maxlen int) (string, *list.Element) {
+func (bt Bt) fillRow(level int, td []int, bfs list.List, where *list.Element, maxlen int, id bool) (string, *list.Element) {
 	result := ""
 	nodesInLevel := numPerLevel(level)
 	charsToAdjust := (bt.maxNodesInARow() - nodesInLevel) * maxlen
@@ -371,6 +401,9 @@ func (bt Bt) fillRow(level int, td []int, bfs list.List, where *list.Element, ma
 				ndv := nd.Value
 				if ndv != nil {
 					valstr = ndv.Str()
+					if id {
+						valstr = valstr + "(" + strconv.Itoa(nd.LeftDepth) + "," + strconv.Itoa(nd.RightDept) + ")"
+					}
 				}
 			}
 		}

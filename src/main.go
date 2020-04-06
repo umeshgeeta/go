@@ -25,8 +25,38 @@ func main() {
 	m[2] = 178
 	m[3] = 250
 	m[4] = 251
-	bst1 := buildBinarySearchTree(m)
-	fmt.Println(bst1.Pyramid())
+	//bst1 := buildBinarySearchTree(m)
+	//fmt.Println(bst1.Pyramid(true))	// include depths for debugging
+
+	// Expected output:
+	// 									250
+	// 					250                                         251
+	//		134                   nil                   nil                   nil
+	//	nil        178        nil        nil        nil        nil        nil        nil
+
+	//avlt := buildAvlBstFromMap(m)
+	//fmt.Println(avlt.Pyramid(true))	// include depths for debugging
+
+	values := []int{4, 2, 1, 5, 6, 9, 14, 11, 10, 20}
+	//}
+	avlt := buildAvlBstFromArray(values)
+	fmt.Println(avlt.Pyramid(true))
+	fmt.Println(avlt.Inorder())
+
+	// Output should look like:
+
+	//																			9(3,4)
+	//						5(2,1)                                                                         11(1,2)
+	//				2(1,1)                                  6(0,0)                                 10(0,0)                                 14(0,1)
+	//		1(0,0)                4(0,0)                nil                 nil                 nil                 nil                 nil                 20(0,0)
+	//nil        nil        nil        nil        nil        nil        nil        nil        nil        nil        nil        nil        nil        nil        nil        nil
+
+	//1  2  4  5  6  9  10  11  14  20
+
+
+
+
+
 }
 
 func buildBinaryTree(val map[int]int) bt.Bt {
@@ -64,4 +94,26 @@ func buildBinarySearchTree(val map[int]int) bt.Bst {
 		}
 	}
 	return *bt2
+}
+
+func buildAvlBstFromMap(val map[int]int) bt.Avl {
+	avlt := bt.NewAvl()
+	for i := 0; i < len(val); i ++ {
+		e := avlt.Insert(val[i])
+		if e != nil {
+			log.Fatal(e)
+		}
+	}
+	return *avlt
+}
+
+func buildAvlBstFromArray(val []int) bt.Avl {
+	avlt := bt.NewAvl()
+	for i := 0; i < len(val); i ++ {
+		e := avlt.Insert(val[i])
+		if e != nil {
+			log.Fatal(e)
+		}
+	}
+	return *avlt
 }
