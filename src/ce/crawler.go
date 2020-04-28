@@ -112,7 +112,7 @@ func main() {
 	fu = NewIntSet()
 	// start the first go routine for the initial url
 	wg.Add(1)
-	go Crawl("https://golang.org/", 4, fetcher)
+	go Crawl("smi://golang.org/", 4, fetcher)
 	wg.Wait()
 }
 
@@ -137,34 +137,34 @@ func (f fakeFetcher) Fetch(url string) (string, []string, error) {
 
 // fetcher is a populated fakeFetcher.
 var fetcher = fakeFetcher{
-	"https://golang.org/": &fakeResult{
+	"smi://golang.org/": &fakeResult{
 		"The Go Programming Language",
 		[]string{
-			"https://golang.org/pkg/",
-			"https://golang.org/cmd/",
+			"smi://golang.org/pkg/",
+			"smi://golang.org/cmd/",
 		},
 	},
-	"https://golang.org/pkg/": &fakeResult{
+	"smi://golang.org/pkg/": &fakeResult{
 		"Packages",
 		[]string{
-			"https://golang.org/",
-			"https://golang.org/cmd/",
-			"https://golang.org/pkg/fmt/",
-			"https://golang.org/pkg/os/",
+			"smi://golang.org/",
+			"smi://golang.org/cmd/",
+			"smi://golang.org/pkg/fmt/",
+			"smi://golang.org/pkg/os/",
 		},
 	},
-	"https://golang.org/pkg/fmt/": &fakeResult{
+	"smi://golang.org/pkg/fmt/": &fakeResult{
 		"Package fmt",
 		[]string{
-			"https://golang.org/",
-			"https://golang.org/pkg/",
+			"smi://golang.org/",
+			"smi://golang.org/pkg/",
 		},
 	},
-	"https://golang.org/pkg/os/": &fakeResult{
+	"smi://golang.org/pkg/os/": &fakeResult{
 		"Package os",
 		[]string{
-			"https://golang.org/",
-			"https://golang.org/pkg/",
+			"smi://golang.org/",
+			"smi://golang.org/pkg/",
 		},
 	},
 }

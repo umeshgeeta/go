@@ -16,15 +16,26 @@
 package main
 
 import (
+	"../util"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"log"
 	"os"
 	"path/filepath"
 )
+
+type BucketToFetch struct {
+	AwsBucketName			string
+	LocalDestinationDir		string
+}
+
+type BucketList struct {
+	Bl	[]BucketToFetch
+}
 
 type downloader struct {
 	*s3manager.Downloader
@@ -36,12 +47,24 @@ var (
 	Prefix         = ""    // Using this key prefix
 )
 
-// Invoke one by one each bucket
+var bucketList BucketList
+
+
 func main() {
-	handleBucket("21centurypolitics.com.email", "/Users/umeshpatil/Blog/21CpEmails")
-	fmt.Println("Done bucket 21centurypolitics.com.email")
-	handleBucket("21-cp-submissions", "/Users/umeshpatil/Blog/21CpSubmissions")
-	fmt.Println("Done bucket 21-cp-submissions")
+
+	// Read the configuration - meaning AWS bucket names and local destination
+	err := util.ReadCfg(&bucketList, "s3downloader.json")
+	if err != nil {
+		fmt.Printf("%v\n", err)
+		log.Fatal("Could not read bucket list")
+	}
+
+	// Invoke one by one each bucket
+	for i := 0; i < len(bucketList.Bl); i++ {
+		bucketName := bucketList.Bl[i].AwsBucketName
+		handleBucket(bucketName, bucketList.Bl[i].LocalDestinationDir)
+		fmt.Printf("Done %s\n", bucketName)
+	}
 }
 
 // Download all accumulated emails / objects in the given bucket to the specified local directory.
