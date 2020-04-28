@@ -1,6 +1,9 @@
-// author: Umesh Patil
-// All copyrights reserved with NeoSemantix, Inc.
-// April 2020
+/*
+ * MIT License
+ * Copyright (c) 2020. Neosemantix, Inc.
+ * Author: Umesh Patil
+ */
+
 //
 // The program download email objects received on a bucket and
 // deletes those from the bucket upon successful download.
@@ -29,26 +32,25 @@ import (
 )
 
 type BucketToFetch struct {
-	AwsBucketName			string
-	LocalDestinationDir		string
+	AwsBucketName       string
+	LocalDestinationDir string
 }
 
 type BucketList struct {
-	Bl	[]BucketToFetch
+	Bl []BucketToFetch
 }
 
 type downloader struct {
 	*s3manager.Downloader
 	bucket, dir string
-	svc *session.Session
+	svc         *session.Session
 }
 
 var (
-	Prefix         = ""    // Using this key prefix
+	Prefix = "" // Using this key prefix
 )
 
 var bucketList BucketList
-
 
 func main() {
 
@@ -78,9 +80,9 @@ func handleBucket(bckt string, ld string) {
 	d := downloader{bucket: bckt, dir: ld, Downloader: manager, svc: sess}
 
 	client := s3.New(session.New(&aws.Config{
-		Region: aws.String("us-east-1"),
+		Region:                        aws.String("us-east-1"),
 		CredentialsChainVerboseErrors: aws.Bool(true),
-		LogLevel: aws.LogLevel(aws.LogDebug)},
+		LogLevel:                      aws.LogLevel(aws.LogDebug)},
 	))
 	params := &s3.ListObjectsInput{Bucket: &bckt, Prefix: &Prefix}
 	err := client.ListObjectsPages(params, d.eachPage)

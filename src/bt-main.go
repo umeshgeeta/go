@@ -1,6 +1,8 @@
-// author: Umesh Patil
-// All copyrights reserved with NeoSemantix, Inc.
-// April 2020
+/*
+ * MIT License
+ * Copyright (c) 2020. Neosemantix, Inc.
+ * Author: Umesh Patil
+ */
 
 package main
 
@@ -55,10 +57,6 @@ func main() {
 
 	//1  2  4  5  6  9  10  11  14  20
 
-
-
-
-
 }
 
 func buildBinaryTree(val map[int]int) bt.Bt {
@@ -100,7 +98,7 @@ func buildBinarySearchTree(val map[int]int) bt.Bst {
 
 func buildAvlBstFromMap(val map[int]int) bt.Avl {
 	avlt := bt.NewAvl()
-	for i := 0; i < len(val); i ++ {
+	for i := 0; i < len(val); i++ {
 		e := avlt.Insert(val[i])
 		if e != nil {
 			log.Fatal(e)
@@ -111,7 +109,7 @@ func buildAvlBstFromMap(val map[int]int) bt.Avl {
 
 func buildAvlBstFromArray(val []int) bt.Avl {
 	avlt := bt.NewAvl()
-	for i := 0; i < len(val); i ++ {
+	for i := 0; i < len(val); i++ {
 		e := avlt.Insert(val[i])
 		if e != nil {
 			log.Fatal(e)

@@ -1,6 +1,8 @@
-// author: Umesh Patil
-// All copyrights reserved with NeoSemantix, Inc.
-// April 2020
+/*
+ * MIT License
+ * Copyright (c) 2020. Neosemantix, Inc.
+ * Author: Umesh Patil
+ */
 
 package util
 
@@ -10,7 +12,7 @@ import (
 )
 
 type ConfigHome struct {
-	Dir     string `env:"GO_CFG_HOME" env-description:"Directory where we can find s3downloader.cfg file"`
+	Dir string `env:"GO_CFG_HOME" env-description:"Directory where we can find s3downloader.cfg file"`
 }
 
 var cfgHome ConfigHome

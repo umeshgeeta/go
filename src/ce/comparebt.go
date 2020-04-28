@@ -1,3 +1,9 @@
+/*
+ * MIT License
+ * Copyright (c) 2020. Neosemantix, Inc.
+ * Author: Umesh Patil
+ */
+
 package main
 
 import (
@@ -28,7 +34,7 @@ Then read and print 10 values from the channel. It should be the numbers 1, 2, 3
 Same(tree.New(1), tree.New(1)) should return true, and Same(tree.New(1), tree.New(2)) should return false.
 
 The documentation for Tree can be found at: https://godoc.org/golang.org/x/tour/tree#Tree.
- */
+*/
 
 // Walk walks the tree t sending all values
 // from the tree to the channel ch.
@@ -46,12 +52,12 @@ func Walk(t *tree.Tree, ch chan int) {
 // t1 and t2 contain the same values.
 func Same(t1, t2 *tree.Tree) bool {
 	ch1 := make(chan int)
-	go func(){
+	go func() {
 		Walk(t1, ch1)
 		close(ch1)
 	}()
 	ch2 := make(chan int)
-	go func(){
+	go func() {
 		Walk(t2, ch2)
 		close(ch2)
 	}()

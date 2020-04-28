@@ -1,5 +1,8 @@
-// author: Umesh Patil
-// March 2020
+/*
+ * MIT License
+ * Copyright (c) 2020. Neosemantix, Inc.
+ * Author: Umesh Patil
+ */
 
 // The program builds a binary tree based on insertions done. The level
 // where root resides is designated as '1', next at '2' and so forth.
@@ -46,19 +49,19 @@ type NumVal struct {
 
 // Binary tree structure
 type Bt struct {
-	Root *Node
+	Root      *Node
 	NodeCount int
 }
 
 // What each node of the binary tree would look like:
 // pointers to parent and children; value and depths of children subtrees.
 type Node struct {
-	Value Comparable
-	Parent *Node
-	LeftChild *Node
+	Value      Comparable
+	Parent     *Node
+	LeftChild  *Node
 	RightChild *Node
-	LeftDepth int
-	RightDept int
+	LeftDepth  int
+	RightDept  int
 }
 
 const TileSize = 4
@@ -78,7 +81,7 @@ func NewBt() *Bt {
 // Root is given for the tree to be build.
 func NewBtWithRoot(rv Comparable) *Bt {
 	bt := new(Bt)
-	root := Node {rv, nil, nil, nil, 0, 0}
+	root := Node{rv, nil, nil, nil, 0, 0}
 	bt.SetChild(&root, nil, 0, false)
 	return bt
 }
@@ -128,31 +131,34 @@ func (node Node) GetMaxDepth() int {
 
 // byWhat: It can be +1 or -1 or some other when the entire subtree is appended or chopped off
 // whichChild: 1 for Left Child and 0: for Right Child
-func (node* Node) ChangeDepth(byWhat int, whichChild int) {
+func (node *Node) ChangeDepth(byWhat int, whichChild int) {
 	switch whichChild {
-	case 0: {
-				node.RightDept += byWhat
-				if node.Parent != nil {
-					// recursive call
-					wc := node.Parent.whichChild(node)
-					if wc == 0 || wc == 1 {
-						node.Parent.ChangeDepth(byWhat, wc)
-					}
+	case 0:
+		{
+			node.RightDept += byWhat
+			if node.Parent != nil {
+				// recursive call
+				wc := node.Parent.whichChild(node)
+				if wc == 0 || wc == 1 {
+					node.Parent.ChangeDepth(byWhat, wc)
 				}
 			}
-	case 1: {
-				node.LeftDepth += byWhat
-				if node.Parent != nil {
-					// recursive call
-					wc := node.Parent.whichChild(node)
-					if wc == 0 || wc == 1 {
-						node.Parent.ChangeDepth(byWhat, wc)
-					}
+		}
+	case 1:
+		{
+			node.LeftDepth += byWhat
+			if node.Parent != nil {
+				// recursive call
+				wc := node.Parent.whichChild(node)
+				if wc == 0 || wc == 1 {
+					node.Parent.ChangeDepth(byWhat, wc)
 				}
 			}
-	default: {
-				fmt.Printf("Unexpected child value: %d %v\n", whichChild, node)
-			}
+		}
+	default:
+		{
+			fmt.Printf("Unexpected child value: %d %v\n", whichChild, node)
+		}
 
 	}
 }
@@ -161,7 +167,7 @@ func (node* Node) ChangeDepth(byWhat int, whichChild int) {
 // Argument lr indicates whether to set this node as left child (lr == 0)or
 // right child (lr == 1) of the parent. When parent is nil, we treat
 // invocation of the method as to set the root in which case argument lr is ignored.
-func (bt* Bt) SetChild(node *Node, parent *Node, lr int, push bool) error {
+func (bt *Bt) SetChild(node *Node, parent *Node, lr int, push bool) error {
 	var err error
 	err = nil
 	// if parent is nil and the tree does not have any root, we can place the node at the root
@@ -187,7 +193,7 @@ func (bt* Bt) SetChild(node *Node, parent *Node, lr int, push bool) error {
 					subtree := parent.RightChild
 					parent.RightChild = node
 					node.Parent = parent
-					parent.ChangeDepth(1,0)
+					parent.ChangeDepth(1, 0)
 					node.RightChild = subtree
 					node.RightDept = int(math.Max(float64(subtree.RightDept), float64(subtree.LeftDepth)) + 1)
 				} else {
@@ -205,7 +211,7 @@ func (bt* Bt) SetChild(node *Node, parent *Node, lr int, push bool) error {
 					subtree := parent.LeftChild
 					parent.LeftChild = node
 					node.Parent = parent
-					parent.ChangeDepth(1,1)
+					parent.ChangeDepth(1, 1)
 					node.LeftChild = subtree
 					node.LeftDepth = int(math.Max(float64(subtree.RightDept), float64(subtree.LeftDepth)) + 1)
 				} else {
@@ -218,13 +224,13 @@ func (bt* Bt) SetChild(node *Node, parent *Node, lr int, push bool) error {
 }
 
 // Set the given node at the specified index in the tree. As mentioned indices are as in BFS.
-func (bt* Bt) SetNode(index int, node *Node) error {
+func (bt *Bt) SetNode(index int, node *Node) error {
 	var err error
 	path := GetPath(index)
 	levels := path.Len()
 	if levels > 0 {
 		e := path.Front()
-		path.Remove(e)	// remove the root from the list
+		path.Remove(e) // remove the root from the list
 		// we expect the first node to be root and value at 0
 		child := e.Value.(int)
 		if child == 0 {
@@ -267,7 +273,7 @@ func (bt* Bt) SetNode(index int, node *Node) error {
 
 // Utility method where we wrap the value into NumVal Node and add to the tree
 // at the given index.
-func (bt* Bt) Insert(index int, val int) error {
+func (bt *Bt) Insert(index int, val int) error {
 	n := NumVal{val}
 	nd := Node{
 		Value:      n,
@@ -285,7 +291,7 @@ func (bt Bt) Height() int {
 	h := 0
 	if bt.Root != nil {
 		depth := int(math.Max(float64(bt.Root.LeftDepth), float64(bt.Root.RightDept)))
-		h = depth + 1	// we need to add the root
+		h = depth + 1 // we need to add the root
 	}
 	return h
 }
@@ -317,8 +323,8 @@ func (bt Bt) Bfs() (list.List, int) {
 						}
 					}
 				} else {
-					chl = &Node{nil, nil,nil,nil,0, 0}
-					chr = &Node{nil, nil,nil,nil,0, 0}
+					chl = &Node{nil, nil, nil, nil, 0, 0}
+					chr = &Node{nil, nil, nil, nil, 0, 0}
 					//l.PushBack(chl)
 					//l.PushBack(chr)
 				}
@@ -328,7 +334,7 @@ func (bt Bt) Bfs() (list.List, int) {
 
 			} else {
 				// wrap the nil
-				n := Node{nil, nil,nil,nil,0, 0}
+				n := Node{nil, nil, nil, nil, 0, 0}
 				//l.InsertAfter(n, e)
 				l.PushBack(&n)
 			}
@@ -349,8 +355,8 @@ func (bt Bt) Pyramid(id bool) string {
 	where := bfs.Front()
 	for level := 1; level <= th; level++ {
 		td := tileDist(tpr, level, th)
-		str, wh :=  bt.fillRow(level, td, bfs, where, maxl, id)
-		result  = result + str + "\n"
+		str, wh := bt.fillRow(level, td, bfs, where, maxl, id)
+		result = result + str + "\n"
 		where = wh
 	}
 	return result
@@ -375,8 +381,8 @@ func inorderRecursive(node *Node) string {
 }
 
 // Returned values: 0 - Right Child 1 - Left Child
-func (node* Node) whichChild(child *Node) int {
-	wc := -2	// on purpose different than 1, 0 and -1
+func (node *Node) whichChild(child *Node) int {
+	wc := -2 // on purpose different than 1, 0 and -1
 	if node.LeftChild != nil && node.LeftChild == child {
 		wc = 1
 	} else if node.RightChild != nil && node.RightChild == child {
@@ -448,12 +454,11 @@ func GetPath(index int) *list.List {
 		case 0:
 			i = i/2 - 1
 		case 1:
-			i = (i-1) / 2
+			i = (i - 1) / 2
 		}
 	}
 	return l
 }
-
 
 // *************************************
 // Functions - Not Exposed
@@ -466,7 +471,7 @@ func numPerLevel(level int) int {
 
 // start and end indices of nodes in a given level
 // end index is excluded, upto that value
-func indices(l int) (int, int){
+func indices(l int) (int, int) {
 	start := int(math.Pow(2, float64(l-1))) - 1
 	end := start + int(math.Pow(2, float64(l-1)))
 	return start, end

@@ -1,5 +1,8 @@
-// author: Umesh Patil
-// March 2020
+/*
+ * MIT License
+ * Copyright (c) 2020. Neosemantix, Inc.
+ * Author: Umesh Patil
+ */
 
 // Basic implementation of Binary Search Tree. It wraps an instance of a
 // binary tree (Bt struct) and the core method is insertion where based on the
@@ -15,13 +18,14 @@ import "fmt"
 type Bst struct {
 	Bt
 }
+
 // *************************************
 // Constructor
 // *************************************
 
 func NewBst() *Bst {
 	bint := NewBt()
-	bst1 := Bst { *bint }
+	bst1 := Bst{*bint}
 	return &bst1
 }
 
@@ -29,7 +33,7 @@ func NewBst() *Bst {
 // Methods - Exposed
 // *************************************
 
-func (bst* Bst)Insert(val int) error {
+func (bst *Bst) Insert(val int) error {
 	n := NumVal{val}
 	nd := Node{
 		Value:      n,
@@ -61,11 +65,11 @@ func (bst* Bst)Insert(val int) error {
 // Methods - Not Exposed
 // *************************************
 
-func (bst* Bst) findParent(root *Node, incoming Comparable) (*Node, int, error) {
+func (bst *Bst) findParent(root *Node, incoming Comparable) (*Node, int, error) {
 	node := root
 	var comparison, err = node.Value.Compare(incoming)
 	fmt.Printf("node: %s incoming: %s comparison: %d\n", node.Value.Str(), incoming.Str(), comparison)
-	if  err == nil {
+	if err == nil {
 		switch comparison {
 		case 0:
 			// incoming is same as the root, we need to change the Left child

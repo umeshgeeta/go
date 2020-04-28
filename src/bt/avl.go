@@ -1,5 +1,8 @@
-// author: Umesh Patil
-// March 2020
+/*
+ * MIT License
+ * Copyright (c) 2020. Neosemantix, Inc.
+ * Author: Umesh Patil
+ */
 
 // AVL Tree - Balanced Binary Search Tree deploying AVL algorithm to balance.
 // https://algorithms.tutorialhorizon.com/avl-tree-insertion/
@@ -12,13 +15,14 @@ package bt
 type Avl struct {
 	Bst
 }
+
 // *************************************
 // Constructor
 // *************************************
 
 func NewAvl() *Avl {
 	bint := NewBst()
-	avl := Avl { *bint }
+	avl := Avl{*bint}
 	return &avl
 }
 
@@ -26,7 +30,7 @@ func NewAvl() *Avl {
 // Methods - Exposed
 // *************************************
 
-func (avl* Avl) Insert(val int) error {
+func (avl *Avl) Insert(val int) error {
 	n := NumVal{val}
 	nd := Node{
 		Value:      n,
@@ -40,7 +44,7 @@ func (avl* Avl) Insert(val int) error {
 	return avl.InsertNode(avl.Root, nd)
 }
 
-func (avl* Avl) InsertNode(parent *Node, nd Node) error {
+func (avl *Avl) InsertNode(parent *Node, nd Node) error {
 	var err error = nil
 	if parent == nil {
 		// node itself becomes the root
@@ -104,7 +108,7 @@ func (avl* Avl) InsertNode(parent *Node, nd Node) error {
 // Methods - Not Exposed
 // *************************************
 
-func (avl* Avl) rightRotate(y *Node) Node {
+func (avl *Avl) rightRotate(y *Node) Node {
 	x := y.LeftChild
 	t2 := x.RightChild
 	parent := y.Parent
@@ -117,8 +121,10 @@ func (avl* Avl) rightRotate(y *Node) Node {
 		wc := parent.whichChild(y)
 		x.Parent = parent
 		switch wc {
-		case 0:	parent.RightChild = x
-		case 1: parent.LeftChild = x
+		case 0:
+			parent.RightChild = x
+		case 1:
+			parent.LeftChild = x
 		}
 	} else {
 		// else y was root, now x will be root
@@ -138,7 +144,7 @@ func (avl* Avl) rightRotate(y *Node) Node {
 	return *x
 }
 
-func (avl* Avl) leftRotate(x *Node) Node {
+func (avl *Avl) leftRotate(x *Node) Node {
 	y := x.RightChild
 	t2 := y.LeftChild
 	parent := x.Parent
@@ -151,8 +157,10 @@ func (avl* Avl) leftRotate(x *Node) Node {
 		wc := parent.whichChild(x)
 		y.Parent = parent
 		switch wc {
-		case 0: parent.RightChild = y
-		case 1: parent.LeftChild = y
+		case 0:
+			parent.RightChild = y
+		case 1:
+			parent.LeftChild = y
 		}
 	} else {
 		// x was root, now y becomes the root

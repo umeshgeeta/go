@@ -1,3 +1,9 @@
+/*
+ * MIT License
+ * Copyright (c) 2020. Neosemantix, Inc.
+ * Author: Umesh Patil
+ */
+
 package main
 
 import (
@@ -17,7 +23,7 @@ Modify the Crawl function to fetch URLs in parallel without fetching the same UR
 Hint: you can keep a cache of the URLs that have been fetched on a map,
 but maps alone are not safe for concurrent use!
 
- */
+*/
 
 // *************************************
 // Set implementation with synchronized methods
@@ -37,14 +43,14 @@ func (set *IntSet) Add(i string) bool {
 	_, found := set.set[i]
 	set.set[i] = true
 	defer set.mux.Unlock()
-	return !found	//False if it existed already
+	return !found //False if it existed already
 }
 
 func (set *IntSet) Contains(i string) bool {
 	set.mux.Lock()
 	_, found := set.set[i]
 	defer set.mux.Unlock()
-	return found	//true if it existed already
+	return found //true if it existed already
 }
 
 func (set *IntSet) Remove(i string) {
@@ -100,6 +106,7 @@ func Crawl(url string, depth int, fetcher Fetcher) {
 
 // set to store url already fetched
 var fu *IntSet
+
 // wait group to tracked all spawned go routines
 var wg sync.WaitGroup
 
@@ -168,4 +175,3 @@ var fetcher = fakeFetcher{
 		},
 	},
 }
-
