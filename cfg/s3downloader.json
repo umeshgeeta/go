@@ -1,0 +1,10 @@
+{ "Bl" : [	{
+  				"AwsBucketName": "<First AWS S3 Bucket Name>",
+  				"LocalDestinationDir": "<Local destination directory where you want to download objects of this bucket>"
+			}, 
+			{
+  				"AwsBucketName": "<Second AWS S3 Bucket Name>",
+  				"LocalDestinationDir": "<Local destination directory where you want to download objects of this bucket>"
+			}
+		]
+}
