@@ -1,3 +1,7 @@
+// author: Umesh Patil
+// All copyrights reserved with NeoSemantix, Inc.
+// April 2020
+
 package util
 
 import (
