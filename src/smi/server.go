@@ -4,19 +4,29 @@
  * Author: Umesh Patil
  */
 
-package main
+package smi
 
 import (
+	"../util"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"path/filepath"
 )
 
-func main() {
-	caCert, err := ioutil.ReadFile("client.crt")
+func Server() {
+
+	cfgDir, err := util.GetCfgHomeDir()
+	if err != nil {
+		log.Fatal("Unable to get Config Home Directory to locate certificates and keys")
+	}
+	crtKeyDir := cfgDir + "/smi-cert/"
+
+	caCert, err := ioutil.ReadFile(crtKeyDir + "client.crt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,7 +41,7 @@ func main() {
 		Handler:   &handler{},
 		TLSConfig: cfg,
 	}
-	log.Fatal(srv.ListenAndServeTLS("server.crt", "server.key"))
+	log.Fatal(srv.ListenAndServeTLS(crtKeyDir+"server.crt", crtKeyDir+"server.key"))
 }
 
 type handler struct{}
@@ -45,20 +55,20 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case "GET":
-		//http.ServeFile(w, r, "form.html")
-		http.Error(w, "406 not found.", http.StatusNotAcceptable)
+		absPath, _ := filepath.Abs("../src/smi/about.html")
+		http.ServeFile(w, r, absPath)
+		//http.Error(w, "406 not found.", http.StatusNotAcceptable)
 
 	case "POST":
-		// Call ParseForm() to parse the raw query and update r.PostForm and r.Form.
-		if err := r.ParseForm(); err != nil {
-			fmt.Fprintf(w, "ParseForm() err: %v", err)
-			return
+		decoder := json.NewDecoder(r.Body)
+		var t SmContent
+		err := decoder.Decode(&t)
+		if err != nil {
+			panic(err)
 		}
-		fmt.Fprintf(w, "Post from website! r.PostFrom = %v\n", r.PostForm)
-		name := r.FormValue("name")
-		address := r.FormValue("address")
-		fmt.Fprintf(w, "Name = %s\n", name)
-		fmt.Fprintf(w, "Address = %s\n", address)
+		log.Printf("%v\n", t)
+		w.Write([]byte("Received Post request \n"))
+
 	default:
 		fmt.Fprintf(w, "Sorry, only GET and POST methods are supported.")
 	}

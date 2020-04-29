@@ -29,3 +29,8 @@ func ReadCfg(cfg interface{}, fileName string) error {
 
 	return cleanenv.ReadConfig(cfgFileName, cfg)
 }
+
+func GetCfgHomeDir() (string, error) {
+	err := cleanenv.ReadEnv(&cfgHome)
+	return cfgHome.Dir, err
+}
