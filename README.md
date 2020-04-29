@@ -9,3 +9,13 @@ This project contains varipus Go Lang implementation I have been undertaking. It
 All of the content I intend to keep it free for anyone's use.
 
 Under 'cfg' folder you will find configuration file templates for all of Go Lang programs under 'src' folder. You would take these template files and create actual config files, with your corresponding run-time properties, to utilize the code.
+
+
+Feel free to reach out to me (umesh409@yahoo.com) for:
+
+- how to use the code mentioned here, or
+- if you need any additonal functionality in the current code. I will try my best to have it included.
+
+Have a look and enjoy! 
+
+Thanks for vising!!
