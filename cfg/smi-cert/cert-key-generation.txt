@@ -1,0 +1,51 @@
+Creating Certificates & Keys for HTTPS
+=====================================
+
+References:
+
+		https://github.com/jcbsmpsn/golang-https-example
+
+		https://medium.com/a-layman/golang-build-a-simple-web-service-part-7-learn-the-ssl-tsl-connection-713b39f11eac
+
+		
+
+1)	Server certificate and key
+
+openssl req \
+    -newkey rsa:2048 \
+    -nodes \
+    -days 3650 \
+    -x509 \
+    -keyout ca.key \
+    -out ca.crt \
+    -subj "/CN=*"
+openssl req \
+    -newkey rsa:2048 \
+    -nodes \
+    -keyout server.key \
+    -out server.csr \
+    -subj "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=*"
+openssl x509 \
+    -req \
+    -days 365 \
+    -sha256 \
+    -in server.csr \
+    -CA ca.crt \
+    -CAkey ca.key \
+    -CAcreateserial \
+    -out server.crt \
+    -extfile <(echo subjectAltName = IP:127.0.0.1)
+
+Change 'subj' as applicable as well as 'subjectAltName'.
+
+
+2)	Client certificate and key
+
+openssl req \
+    -x509 \
+    -nodes \
+    -newkey rsa:2048 \
+    -keyout client.key \
+    -out client.crt \
+    -days 3650 \
+    -subj "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=*"
