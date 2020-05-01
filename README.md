@@ -4,7 +4,7 @@ This project contains varipus Go Lang implementation I have been undertaking. It
 
 2) Some fairly moderate size implementation of well know algorithms and problems. Binary Tree (bt) is one such project which contains core Binary Tree implementation, Binary Search Tree implementation and AVL Balanced Binary Search Tree implementation.
 
-3) Finally there will be bit ambitious projects which others may find useful or consume. Typically I intend to keep this production level ready. One such project started in 'smi' which contains Go implementation for 'publishing / pushing content to Social Media simultenously'. The first such proposed feature is a server implementation which will push POST content to Facebook and Twitter.
+3) Finally there will be bit ambitious projects which others may find useful or consume. Typically I intend to keep this production level ready. One such project started is 'smi' which will contain Go implementation for 'publishing / pushing content to Social Media simultenously'. The first such proposed feature is a server implementation which will push POST content to Facebook and Twitter. It is still in 'development'and I will update the README when a first usable version is ready.
 
 All of the content I intend to keep it free for anyone's use.
 
