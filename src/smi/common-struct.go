@@ -6,13 +6,35 @@
 
 package smi
 
-// Social Media Content - one unit
-type SmContent struct {
-	Message string
-	Link    string
+type FbAuthCred struct {
+	ObjectId string
+	UserName string
+	Password string
 }
 
-func NewSmContent(msg string, url string) *SmContent {
-	sm := SmContent{msg, url}
+type CommonContent struct {
+	Caption  string
+	ImageUrl string
+	Link     string
+}
+
+// Social Media Content - one unit
+type PayloadToPublish struct {
+	FbAuthCred FbAuthCred
+	Content    CommonContent
+}
+
+func NewPayloadToPublish(fbc FbAuthCred, content CommonContent) *PayloadToPublish {
+	sm := PayloadToPublish{fbc, content}
 	return &sm
+}
+
+func NewFbAuthCred(oid string, user string, pword string) *FbAuthCred {
+	fb := FbAuthCred{oid, user, pword}
+	return &fb
+}
+
+func NewCommonContent(cap string, iurl string, link string) *CommonContent {
+	cc := CommonContent{cap, iurl, link}
+	return &cc
 }

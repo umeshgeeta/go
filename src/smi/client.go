@@ -18,7 +18,12 @@ import (
 	"net/http"
 )
 
+var fbAuth FbAuthCred
+var payload2Pub PayloadToPublish
+
 func Client() {
+
+	readConfig()
 
 	cfgDir, err := util.GetCfgHomeDir()
 	if err != nil {
@@ -49,23 +54,26 @@ func Client() {
 
 	url := "https://127.0.0.1:8443"
 
-	resp, err := client.Get(url)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+	getAboutHtml(client, url)
 
-	htmlData, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer resp.Body.Close()
-	fmt.Printf("%v\n", resp.Status)
-	fmt.Printf(string(htmlData))
+	postSampleContent(client, url)
+}
 
-	smc := NewSmContent("PostMessage", "url")
-	jsonStr, err := json.Marshal(smc)
+func readConfig() {
+	// Read the configuration - meaning AWS bucket names and local destination
+	err := util.ReadCfg(&payload2Pub, "smi-client.json")
+	if err != nil {
+		fmt.Printf("%v\n", err)
+		log.Fatal("Could not read smi-client configurations")
+	} else {
+		fmt.Printf("%v\n", payload2Pub)
+	}
+}
+
+func postSampleContent(client *http.Client, url string) {
+	cc := NewCommonContent("Caption", "Url to image", "Content link url")
+	payload2Pub.Content = *cc
+	jsonStr, err := json.Marshal(payload2Pub)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
@@ -73,7 +81,7 @@ func Client() {
 	req.Header.Set("X-Custom-Header", "myvalue")
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err = client.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
 	}
@@ -83,5 +91,20 @@ func Client() {
 	fmt.Println("response Headers:", resp.Header)
 	body, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println("response Body:", string(body))
+}
 
+func getAboutHtml(client *http.Client, url string) {
+	resp, err := client.Get(url)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	htmlData, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer resp.Body.Close()
+	fmt.Printf("%v\n", resp.Status)
+	fmt.Printf(string(htmlData))
 }

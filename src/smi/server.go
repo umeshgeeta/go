@@ -61,7 +61,7 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	case "POST":
 		decoder := json.NewDecoder(r.Body)
-		var t SmContent
+		var t PayloadToPublish
 		err := decoder.Decode(&t)
 		if err != nil {
 			panic(err)
@@ -72,4 +72,17 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	default:
 		fmt.Fprintf(w, "Sorry, only GET and POST methods are supported.")
 	}
+}
+
+func propagate() {
+	fb()
+	twitter()
+}
+
+func fb() {
+
+}
+
+func twitter() {
+
 }
