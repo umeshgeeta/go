@@ -18,13 +18,13 @@ openssl req \
     -x509 \
     -keyout ca.key \
     -out ca.crt \
-    -subj "/CN=*"
+    -subj "/CN=127.0.0.1"
 openssl req \
     -newkey rsa:2048 \
     -nodes \
     -keyout server.key \
     -out server.csr \
-    -subj "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=*"
+    -subj "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=127.0.0.1"
 openssl x509 \
     -req \
     -days 365 \
@@ -48,4 +48,4 @@ openssl req \
     -keyout client.key \
     -out client.crt \
     -days 3650 \
-    -subj "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=*"
+    -subj "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=127.0.0.1"

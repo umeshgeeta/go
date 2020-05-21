@@ -7,6 +7,7 @@
 package util
 
 import (
+	"fmt"
 	"github.com/ilyakaznacheev/cleanenv"
 	"log"
 )
@@ -26,7 +27,7 @@ func ReadCfg(cfg interface{}, fileName string) error {
 		log.Fatal("Environment variable GO_CFG_HOME is not defined")
 	}
 	cfgFileName := cfgHome.Dir + "/" + fileName
-
+	fmt.Printf("Config file in use %s\n", cfgFileName)
 	return cleanenv.ReadConfig(cfgFileName, cfg)
 }
 

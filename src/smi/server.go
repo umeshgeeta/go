@@ -18,6 +18,10 @@ import (
 	"path/filepath"
 )
 
+var chIncoming chan PayloadToPublish
+var chToFb chan FbPayload
+var chToTwitter chan TwitterPayload
+
 func Server() {
 
 	cfgDir, err := util.GetCfgHomeDir()
@@ -25,11 +29,21 @@ func Server() {
 		log.Fatal("Unable to get Config Home Directory to locate certificates and keys")
 	}
 	crtKeyDir := cfgDir + "/smi-cert/"
+	fmt.Printf("Certificates and key will be read from directory:  %s\n", crtKeyDir)
 
 	caCert, err := ioutil.ReadFile(crtKeyDir + "client.crt")
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	chIncoming = make(chan PayloadToPublish)
+	chToFb = make(chan FbPayload)
+	chToTwitter = make(chan TwitterPayload)
+
+	go propagate()
+	go fb()
+	go twitter()
+
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caCert)
 	cfg := &tls.Config{
@@ -55,7 +69,8 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case "GET":
-		absPath, _ := filepath.Abs("../src/smi/about.html")
+		//absPath, _ := filepath.Abs("../src/smi/about.html")
+		absPath, _ := filepath.Abs("../src/smi/fb-login.html")
 		http.ServeFile(w, r, absPath)
 		//http.Error(w, "406 not found.", http.StatusNotAcceptable)
 
@@ -69,20 +84,33 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%v\n", t)
 		w.Write([]byte("Received Post request \n"))
 
+		chIncoming <- t
+
 	default:
 		fmt.Fprintf(w, "Sorry, only GET and POST methods are supported.")
 	}
 }
 
 func propagate() {
-	fb()
-	twitter()
+	for {
+		payload := <-chIncoming
+		fp := FbPayload{payload.FbAuthCred, payload.Content}
+		chToFb <- fp
+		tp := TwitterPayload{payload.TwitterCred, payload.Content}
+		chToTwitter <- tp
+	}
 }
 
 func fb() {
-
+	for {
+		pl := <- chToFb
+		fmt.Printf("Publishing %v to Fb\n", pl)
+	}
 }
 
 func twitter() {
-
+	for {
+		pl := <- chToTwitter
+		fmt.Printf("Publishing %v to Twitter\n", pl)
+	}
 }
