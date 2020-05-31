@@ -13,6 +13,8 @@ Feel free to reach out to me (umesh409@yahoo.com) for:
 - how to use the code mentioned here, or
 - if you need any additional functionality in the current code. I will try my best to have it included.
 
+Code is under MIT License, so it is least restrictive.
+
 Have a look and enjoy! 
 
 Thanks for visiting!!!
