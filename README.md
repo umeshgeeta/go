@@ -6,7 +6,7 @@ This repository contains various go coding programs I have undertaken which I am
 
 2) Some relatively moderate size implementation of well know algorithms and problems. Binary Tree (bt) is one such project which contains core Binary Tree implementation, Binary Search Tree implementation, and AVL Balanced Binary Search Tree implementation. It is under 'src/bt' with bt-main as it's test driver main program.
 
-3) The folder 'src/smi' contains basic HTTPS client-server (and works via browser to server as well) skeleton implementation. How to log-in to Facebook that is implemented in this example. (More ambitious code sharing under this umbrella will have to wait as work through 'ownership' issues.)
+3) The folder 'src/smi' contains basic HTTPS client-server (and works via browser to server as well) skeleton implementation. How to log-in to Facebook that is implemented in this example. (More ambitious code sharing under this umbrella will have to wait as I work through 'ownership' issues.)
 
 Feel free to reach out to me (umesh409@yahoo.com) for:
 
