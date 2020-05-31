@@ -1,4 +1,8 @@
 /*
+ * It is a launch point for Binry Tree , BST and AVL Trees. It gives some
+ * sample input to validate the functionality of Binary Tree implementation
+ * in 'bt' package.
+ *
  * MIT License
  * Copyright (c) 2020. Neosemantix, Inc.
  * Author: Umesh Patil

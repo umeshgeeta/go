@@ -1,4 +1,9 @@
 /*
+ * HTTPS client which makes one sample GET and POST calls. It expects
+ * GO_CFG_HOME environment is set up and it points to a directory which
+ * contains smi-client.json file. Under cfg folder you can find a template
+ * which you should change as per your local set up.
+ *
  * MIT License
  * Copyright (c) 2020. Neosemantix, Inc.
  * Author: Umesh Patil
@@ -9,7 +14,6 @@ package smi
 import (
 	"../util"
 	"bytes"
-	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
 	"fmt"
@@ -40,30 +44,36 @@ func Client() {
 	caCertPool := x509.NewCertPool()
 	caCertPool.AppendCertsFromPEM(caCert)
 
-	cert, err := tls.LoadX509KeyPair(crtKeyDir+"client.crt", crtKeyDir+"client.key")
-	if err != nil {
-		log.Fatal(err)
-	}
+	// This is kind of redundant when client side cert validation is turned off.
+	//cert, err := tls.LoadX509KeyPair(crtKeyDir+"client.crt", crtKeyDir+"client.key")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 
 	client := &http.Client{
 		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
-				RootCAs:      caCertPool,
-				Certificates: []tls.Certificate{cert},
-			},
+			//TLSClientConfig: &tls.Config{
+			//	RootCAs:      caCertPool,
+			//	Certificates: []tls.Certificate{cert},
+			//},
 		},
 	}
 
-	//url := "https://127.0.0.1:8443/about.html"
-	//url := "https://127.0.0.1:8443/fb-login.html"
-	url := "https://127.0.0.1:8443/"
-	//url := "https://localhost:8443/"
+	url := "https://dev.smi.com:8443/"
+
 	getAboutHtml(client, url)
 	postSampleContent(client, url)
 }
 
 func readConfig() {
-	// Read the configuration - meaning AWS bucket names and local destination
+	// Read the configuration - credentials to FB and Twitter are shown
+	// in case server wants to cash those. Though it is HTTPS, so safe to
+	// send credentials; one would not use this method. The GET call
+	// which gets FB login, user directly logs in to FB directly and then
+	// a short term token is obtained which is used for subsequent FB API
+	// calls. In that sense, this client and the approach of sharing credentials
+	// through config file would not work. It is retained only for
+	// demonstration purposes.
 	err := util.ReadCfg(&payload2Pub, "smi-client.json")
 	if err != nil {
 		fmt.Printf("%v\n", err)
