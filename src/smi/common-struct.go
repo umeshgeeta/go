@@ -1,7 +1,6 @@
 /*
  * MIT License
- * Copyright (c) 2020. Neosemantix, Inc.
- * Author: Umesh Patil
+ * Author: Umesh Patil, Neosemantix, Inc.
  */
 
 package smi
@@ -13,7 +12,7 @@ type FbAuthCred struct {
 }
 
 type TwitterCred struct {
-	User string
+	User     string
 	Password string
 }
 
@@ -25,19 +24,19 @@ type CommonContent struct {
 
 // Social Media Content - one unit
 type PayloadToPublish struct {
-	FbAuthCred 		FbAuthCred
-	TwitterCred		TwitterCred
-	Content    		CommonContent
+	FbAuthCred  FbAuthCred
+	TwitterCred TwitterCred
+	Content     CommonContent
 }
 
 type FbPayload struct {
-	FbAuthCred		FbAuthCred
-	Content 		CommonContent
+	FbAuthCred FbAuthCred
+	Content    CommonContent
 }
 
 type TwitterPayload struct {
-	TwitterCred		TwitterCred
-	Content 		CommonContent
+	TwitterCred TwitterCred
+	Content     CommonContent
 }
 
 func NewPayloadToPublish(fbc FbAuthCred, content CommonContent) *PayloadToPublish {

@@ -5,8 +5,7 @@
  * which you should change as per your local set up.
  *
  * MIT License
- * Copyright (c) 2020. Neosemantix, Inc.
- * Author: Umesh Patil
+ * Author: Umesh Patil, Neosemantix, Inc.
  */
 
 package smi

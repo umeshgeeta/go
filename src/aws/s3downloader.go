@@ -1,7 +1,6 @@
 /*
  * MIT License
- * Copyright (c) 2020. Neosemantix, Inc.
- * Author: Umesh Patil
+ * Author: Umesh Patil, Neosemantix, Inc.
  */
 
 //

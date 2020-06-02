@@ -9,11 +9,10 @@
  *
  * In this example hostname is "dev.smi.com" and the URL to be used is
  * "https://dev.smi.com:8443". You can check this through browser or the client
- * program too. 
+ * program too.
  *
  * MIT License
- * Copyright (c) 2020. Neosemantix, Inc.
- * Author: Umesh Patil
+ * Author: Umesh Patil, Neosemantix, Inc.
  */
 
 package smi
@@ -41,7 +40,7 @@ func Server() {
 	caCertPool := x509.NewCertPool()
 	//caCertPool.AppendCertsFromPEM(caCert)
 	cfg := &tls.Config{
-		ClientAuth: tls.NoClientCert, 	//.RequireAndVerifyClientCert,
+		ClientAuth: tls.NoClientCert, //.RequireAndVerifyClientCert,
 		ClientCAs:  caCertPool,
 	}
 	srv := &http.Server{

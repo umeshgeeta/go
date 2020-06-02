@@ -1,7 +1,6 @@
 /*
  * MIT License
- * Copyright (c) 2020. Neosemantix, Inc.
- * Author: Umesh Patil
+ * Author: Umesh Patil, Neosemantix, Inc.
  */
 package main
 
@@ -16,15 +15,14 @@ func NewSet() *IntSet {
 func (set *IntSet) Add(i int) bool {
 	_, found := set.intBoolMap[i]
 	set.intBoolMap[i] = true
-	return !found	//False if it existed already
+	return !found //False if it existed already
 }
 
 func (set *IntSet) Get(i int) bool {
 	_, found := set.intBoolMap[i]
-	return found	//true if it existed already
+	return found //true if it existed already
 }
 
 func (set *IntSet) Remove(i int) {
 	delete(set.intBoolMap, i)
 }
-
