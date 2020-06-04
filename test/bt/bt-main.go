@@ -6,11 +6,10 @@
  * MIT License
  * Author: Umesh Patil, Neosemantix, Inc.
  */
-
 package main
 
 import (
-	"./bt"
+	"../../src/bt"
 	"fmt"
 	"log"
 )
