@@ -5,6 +5,7 @@ package infra
 
 import (
 	"../../../src/executor"
+	"fmt"
 	"time"
 )
 
@@ -27,7 +28,9 @@ func (tt *TestTask) GetId() int {
 
 func (tt *TestTask) Execute() executor.Response {
 	resp := executor.NewResponse(tt.id)
+	fmt.Printf("Start of execution for task id:	%d at time: %v\n", tt.id, time.Now().Nanosecond())
 	time.Sleep(time.Duration(tt.execDuration) * time.Microsecond)
+	fmt.Printf("  End of execution for task id:	%d at time:	%v\n", tt.id, time.Now().Nanosecond())
 	// we regard the task is completed successfully, so we set the status
 	resp.Status = executor.TaskStatusCompletedSuccessfully
 	return *resp
