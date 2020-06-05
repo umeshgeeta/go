@@ -1,7 +1,5 @@
-/*
- * MIT License
- * Author: Umesh Patil, Neosemantix, Inc.
- */
+// MIT License
+// Author: Umesh Patil, Neosemantix, Inc.
 package executor
 
 // Holds two separate arrays of executors - one for blocking tasks and

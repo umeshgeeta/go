@@ -1,20 +1,8 @@
-/*
- * MIT License
- * Author: Umesh Patil, Neosemantix, Inc.
- */
+// MIT License
+// Author: Umesh Patil, Neosemantix, Inc.
 
-//
-// The program download email objects received on a bucket and
-// deletes those from the bucket upon successful download.
-//
-// Appropriate credentials are needed in ~/.aws directory.
-// Contents of the file credentials are of the format:
-//
-//	[default]
-//	aws_access_key_id = <your access key id>
-//	aws_secret_access_key = <AWS generated access key>
-//
-
+// The program download email objects received on a S3 bucket and deletes those
+// from the bucket upon successful download.
 package main
 
 import (
@@ -29,6 +17,13 @@ import (
 	"os"
 	"path/filepath"
 )
+
+// Appropriate credentials are needed in ~/.aws directory.
+// Contents of the file credentials are of the format:
+//
+//	[default]
+//	aws_access_key_id = <your access key id>
+//	aws_secret_access_key = <AWS generated access key>
 
 type BucketToFetch struct {
 	AwsBucketName       string

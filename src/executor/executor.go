@@ -1,7 +1,23 @@
-/*
- * MIT License
- * Author: Umesh Patil, Neosemantix, Inc.
- */
+// MIT License
+// Author: Umesh Patil, Neosemantix, Inc.
+
+// Package executor contains basic implementation of an executor framework.
+// The client facing interface is provided by the ExecutionService which
+// creates ExecutorPool and Dispatcher. Task interface is defined so client
+// would implement these methods on client specific Type to undertake specific
+// work. When a task is submitted to the ExecutionService it submits it to the
+// Dispatcher which assigns a channel on which task execution result / response
+// is received. Along with attaching a channel to the task, it creates a
+// separate routine to listen to response arrival. If the submitted task is
+// blocking the calling routine is actually waiting for the response so
+// Dispatcher returns the response upon receiving as well as undertakes the
+// house keeping work of recycling the channel for another task. If the
+// submitted task is asynchronous, caller is returned upon task submission
+// even though there is a routine waiting for the response to undertake the
+// house keeping.
+//
+// ExecutorPool maintains a set of executors for async tasks and another one for
+// blocking tasks.
 package executor
 
 import (
@@ -10,7 +26,10 @@ import (
 	"sync"
 )
 
-// Core Executor contract
+// We start with core Executor contract as an interface. As expected it has
+// common methods like Start, Stop and Submit to receive a task. User can also
+// specify whether we wait for availability of an internal buffer to accept the
+// incoming task.
 type Executor interface {
 	Start()
 

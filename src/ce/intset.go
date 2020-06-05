@@ -1,9 +1,9 @@
-/*
- * MIT License
- * Author: Umesh Patil, Neosemantix, Inc.
- */
+// MIT License
+// Author: Umesh Patil, Neosemantix, Inc.
+
 package main
 
+// Another set implementation.
 type IntegerSet struct {
 	intBoolMap map[int]bool
 }

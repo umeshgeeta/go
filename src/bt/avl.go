@@ -1,33 +1,19 @@
-/*
- * MIT License
- * Author: Umesh Patil, Neosemantix, Inc.
- */
-
-// AVL Tree - Balanced Binary Search Tree deploying AVL algorithm to balance.
-// https://algorithms.tutorialhorizon.com/avl-tree-insertion/
+// MIT License
+// Author: Umesh Patil, Neosemantix, Inc.
 
 package bt
 
-// *************************************
-// Struct & Constant definitions
-// *************************************
+// AVL Tree - Balanced Binary Search Tree deploying AVL algorithm to balance.
+// https://algorithms.tutorialhorizon.com/avl-tree-insertion/
 type Avl struct {
 	Bst
 }
-
-// *************************************
-// Constructor
-// *************************************
 
 func NewAvl() *Avl {
 	bint := NewBst()
 	avl := Avl{*bint}
 	return &avl
 }
-
-// *************************************
-// Methods - Exposed
-// *************************************
 
 func (avl *Avl) Insert(val int) error {
 	n := NumVal{val}
@@ -102,10 +88,6 @@ func (avl *Avl) InsertNode(parent *Node, nd Node) error {
 	}
 	return err
 }
-
-// *************************************
-// Methods - Not Exposed
-// *************************************
 
 func (avl *Avl) rightRotate(y *Node) Node {
 	x := y.LeftChild

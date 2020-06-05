@@ -1,7 +1,6 @@
-/*
- * MIT License
- * Author: Umesh Patil, Neosemantix, Inc.
- */
+// MIT License
+// Author: Umesh Patil, Neosemantix, Inc.
+
 package executor
 
 import (
@@ -9,7 +8,8 @@ import (
 	"sync"
 )
 
-//noinspection SpellCheckingInspection
+// Dispatcher type which hold reference to executor pool, channels used for
+// getting back task execution results and go routines waiting on task results.
 type Dispatcher struct {
 	respChans    *responseChannels
 	execPool     *ExecutorPool
@@ -30,10 +30,13 @@ type Dispatcher struct {
 // map (key task id) and release the response.)
 //
 // cc: how many channels to create to listen back task result
+//
 // cp: capacity - buffer size - for each channel
+//
 // ep: executor pool
+//
 // wfc: whether to block the submission for availability a channel to hear back
-//		the task result. It does not apply for async tasks.
+// the task result. It does not apply for async tasks.
 func NewDispatcher(cc int, cp int, ep *ExecutorPool, wfc bool) *Dispatcher {
 	var disp Dispatcher
 	disp.waitingTasks = make(map[int]waitingTask)

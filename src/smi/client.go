@@ -1,12 +1,5 @@
-/*
- * HTTPS client which makes one sample GET and POST calls. It expects
- * GO_CFG_HOME environment is set up and it points to a directory which
- * contains smi-client.json file. Under cfg folder you can find a template
- * which you should change as per your local set up.
- *
- * MIT License
- * Author: Umesh Patil, Neosemantix, Inc.
- */
+// MIT License
+// Author: Umesh Patil, Neosemantix, Inc.
 
 package smi
 
@@ -24,6 +17,10 @@ import (
 var fbAuth FbAuthCred
 var payload2Pub PayloadToPublish
 
+// HTTPS client which makes one sample GET and POST calls. It expects
+// GO_CFG_HOME environment is set up and it points to a directory which
+// contains smi-client.json file. Under cfg folder you can find a template
+// which you should change as per your local set up.
 func Client() {
 
 	readConfig()

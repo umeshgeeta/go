@@ -1,37 +1,25 @@
-/*
- * MIT License
- * Author: Umesh Patil, Neosemantix, Inc.
- */
-
-// Basic implementation of Binary Search Tree. It wraps an instance of a
-// binary tree (Bt struct) and the core method is insertion where based on the
-// value, the incoming node is added to the Left subtree or Right subtree.
+// MIT License
+// Author: Umesh Patil, Neosemantix, Inc.
 
 package bt
 
 import "fmt"
 
-// *************************************
-// Struct & Constant definitions
-// *************************************
+// Basic implementation of Binary Search Tree. It wraps an instance of a
+// binary tree (Bt struct) and the core method is insertion where based on the
+// value, the incoming node is added to the Left subtree or Right subtree.
 type Bst struct {
 	Bt
 }
 
-// *************************************
-// Constructor
-// *************************************
-
+// Returns a pointer to a newly minted Binary Search Tree.
 func NewBst() *Bst {
 	bint := NewBt()
 	bst1 := Bst{*bint}
 	return &bst1
 }
 
-// *************************************
-// Methods - Exposed
-// *************************************
-
+// Insert a value in the bst.
 func (bst *Bst) Insert(val int) error {
 	n := NumVal{val}
 	nd := Node{
@@ -60,10 +48,7 @@ func (bst *Bst) Insert(val int) error {
 	return err
 }
 
-// *************************************
-// Methods - Not Exposed
-// *************************************
-
+// Finds parent for a given node in the tree.
 func (bst *Bst) findParent(root *Node, incoming Comparable) (*Node, int, error) {
 	node := root
 	var comparison, err = node.Value.Compare(incoming)
