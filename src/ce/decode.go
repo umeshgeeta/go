@@ -1,7 +1,5 @@
-/*
- * MIT License
- * Author: Umesh Patil, Neosemantix, Inc.
- */
+// MIT License
+// Author: Umesh Patil, Neosemantix, Inc.
 
 package main
 
@@ -13,6 +11,7 @@ import (
 	"mime"
 )
 
+// Simple decoding coding exercise.
 func main() {
 	dec := new(mime.WordDecoder)
 	header, err := dec.Decode("=?utf-8?q?=C2=A1Hola,_se=C3=B1or!?=")

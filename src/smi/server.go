@@ -1,20 +1,9 @@
-/*
- * If you run this code from IDE (like GoLand) ensure that you set the
- * environment variable GO_CFG_HOME to point to a directory which contains a
- * directory 'smi-cert' which contains a certificate and a key for domain
- * where you want to host this server.
- *
- * Certificates are generated using OpenSSL. If you use client side certificate
- * validation, you will need to uncomment corresponding code.
- *
- * In this example hostname is "dev.smi.com" and the URL to be used is
- * "https://dev.smi.com:8443". You can check this through browser or the client
- * program too.
- *
- * MIT License
- * Author: Umesh Patil, Neosemantix, Inc.
- */
+// MIT License
+// Author: Umesh Patil, Neosemantix, Inc.
 
+// Package SMI contains HTTPS client and server sample implementation.
+// It also contains some login examples for common social media platforms
+// like Facebook.
 package smi
 
 import (
@@ -28,6 +17,17 @@ import (
 	"path/filepath"
 )
 
+// If you run this code from IDE (like GoLand) ensure that you set the
+// environment variable GO_CFG_HOME to point to a directory which contains a
+// directory 'smi-cert' which contains a certificate and a key for domain
+// where you want to host this server.
+//
+// Certificates are generated using OpenSSL. If you use client side certificate
+// validation, you will need to uncomment corresponding code.
+//
+// In this example hostname is "dev.smi.com" and the URL to be used is
+// "https://dev.smi.com:8443". You can check this through browser or the client
+// program too.
 func Server() {
 
 	cfgDir, err := util.GetCfgHomeDir()

@@ -1,11 +1,6 @@
-/*
- * It is a launch point for Binry Tree , BST and AVL Trees. It gives some
- * sample input to validate the functionality of Binary Tree implementation
- * in 'bt' package.
- *
- * MIT License
- * Author: Umesh Patil, Neosemantix, Inc.
- */
+// MIT License
+// Author: Umesh Patil, Neosemantix, Inc.
+
 package main
 
 import (
@@ -14,7 +9,9 @@ import (
 	"log"
 )
 
-// Tests binary tree pyramid printing.
+// It is a launch point for Binry Tree , BST and AVL Trees. It gives some
+// sample input to validate the functionality of Binary Tree implementation
+// in 'bt' package. It attempts to print a readable binary tree.
 func main() {
 	m := make(map[int]int)
 	m[0] = 250

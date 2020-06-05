@@ -1,15 +1,11 @@
-/*
- * MIT License
- * Author: Umesh Patil, Neosemantix, Inc.
- */
+// MIT License
+// Author: Umesh Patil, Neosemantix, Inc.
 
-// The program builds a binary tree based on insertions done. The level
-// where root resides is designated as '1', next at '2' and so forth.
-// If height of the binary tree is 'h'; there will be h levels in the tree.
-//
-// It prints the binary tree on console as a pyramid. It computes
-// spaces so that the pyramid is depicted as closely as possible.
-
+// The package bt contains binary tree implementation (bt), binary search tree
+// implementation and AVL tree implementation which attempts to balance a binary
+// search tree upon insertions. Type bst depends on bt and type avl builds on
+// top of bst. The core tree functionality and many base routines are defined on
+// bt type.
 package bt
 
 import (
@@ -20,9 +16,12 @@ import (
 	"strconv"
 )
 
-// *************************************
-// Struct & Constant definitions
-// *************************************
+// The program builds a binary tree based on insertions done. The level
+// where root resides is designated as '1', next at '2' and so forth.
+// If height of the binary tree is 'h'; there will be h levels in the tree.
+//
+// It prints the binary tree on console as a pyramid. It computes
+// spaces so that the pyramid is depicted as closely as possible.
 
 // Interface to define what type of nodes are acceptable in the binary tree:
 // any value such we can compare two instances of that value.
@@ -67,10 +66,6 @@ const TileSize = 4
 const PadChar = " "
 const TileChar = " "
 
-// *************************************
-// Constructor
-// *************************************
-
 // Basic constructor
 func NewBt() *Bt {
 	bt := new(Bt)
@@ -90,10 +85,6 @@ func NewBtWithNumValRoot(val int) *Bt {
 	nv := NumVal{val}
 	return NewBtWithRoot(nv)
 }
-
-// *************************************
-// Methods - Exposed
-// *************************************
 
 // Interface implementation, we introduce a type NumVal as Comparable.
 // Below is the implementation of how that comparision should be done.
@@ -365,10 +356,6 @@ func (bt Bt) Inorder() string {
 	return inorderRecursive(bt.Root)
 }
 
-// *************************************
-// Methods - Not Exposed
-// *************************************
-
 func inorderRecursive(node *Node) string {
 	result := ""
 	if node != nil {
@@ -436,10 +423,6 @@ func (bt Bt) maxNodesInARow() int {
 	return numPerLevel(bt.Height())
 }
 
-// *************************************
-// Functions - Exposed
-// *************************************
-
 // For the given index in an hypothetical binary tree,
 // it returns the path from root in terms of whether
 // you pick the Left Child or Right Child.
@@ -458,10 +441,6 @@ func GetPath(index int) *list.List {
 	}
 	return l
 }
-
-// *************************************
-// Functions - Not Exposed
-// *************************************
 
 // returns number of nodes for a given level
 func numPerLevel(level int) int {

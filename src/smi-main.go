@@ -1,13 +1,5 @@
-/*
- * This main function essentially launches in two different modes based on
- * command line arguments passed, If you pass argument 'c', the process runs as
- * the client of the server and if you pass the argument as 's' it runs in the
- * server mode. Naturally, you will need to start the server process first for
- * any client connection to get established.
- *
- * MIT License
- * Author: Umesh Patil, Neosemantix, Inc.
- */
+// MIT License
+// Author: Umesh Patil, Neosemantix, Inc.
 
 package main
 
@@ -17,6 +9,11 @@ import (
 	"os"
 )
 
+// This main function essentially launches in two different modes based on
+// command line arguments passed. If you pass argument 'c', the process runs as
+// the client of the server and if you pass the argument as 's' it runs in the
+// server mode. Naturally, you will need to start the server process first for
+// any client connection to get established.
 func main() {
 
 	// Ref. https://gobyexample.com/command-line-arguments

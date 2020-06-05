@@ -1,8 +1,7 @@
-/*
- * MIT License
- * Author: Umesh Patil, Neosemantix, Inc.
- */
+// MIT License
+// Author: Umesh Patil, Neosemantix, Inc.
 
+// Package util contains various types and functions used in ancillary mode.
 package util
 
 import (
@@ -17,6 +16,7 @@ type ConfigHome struct {
 
 var cfgHome ConfigHome
 
+// Read configurations
 func ReadCfg(cfg interface{}, fileName string) error {
 	err := cleanenv.ReadEnv(&cfgHome)
 	if err != nil {
@@ -30,6 +30,7 @@ func ReadCfg(cfg interface{}, fileName string) error {
 	return cleanenv.ReadConfig(cfgFileName, cfg)
 }
 
+// Returns directory which holds config files.
 func GetCfgHomeDir() (string, error) {
 	err := cleanenv.ReadEnv(&cfgHome)
 	return cfgHome.Dir, err
