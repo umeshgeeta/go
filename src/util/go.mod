@@ -1,4 +1,4 @@
-module util
+module github.com/umeshgeeta/go/util
 
 go 1.14
 
