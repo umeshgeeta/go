@@ -4,7 +4,7 @@
 package main
 
 import (
-	"../../src/executor"
+	"../../executor"
 	"./infra"
 	"fmt"
 	"github.com/stretchr/testify/assert"

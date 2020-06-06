@@ -4,7 +4,7 @@
 package infra
 
 import (
-	"../../../src/executor"
+	"../../../executor"
 	"fmt"
 	"time"
 )

@@ -4,15 +4,15 @@
 package main
 
 import (
-	logutil "../../src/util"
+	"github.com/umeshgeeta/go/util"
 )
 
 // Simple test to ensure that logs are created correctly.
 func main() {
-	logutil.InitializeLog("./log/test.log", 10, 2, 5, false)
-	logutil.GlobalLogSettings.LogOnConsole = true
-	logutil.Log("Started log")
-	logutil.GlobalLogSettings.DebugLog = true
-	logutil.LogDebug("Debug log should come up as well")
-	logutil.Log("End log")
+	util.InitializeLog("./log/test.log", 10, 2, 5, false)
+	util.GlobalLogSettings.LogOnConsole = true
+	util.Log("Started log")
+	util.GlobalLogSettings.DebugLog = true
+	util.LogDebug("Debug log should come up as well")
+	util.Log("End log")
 }

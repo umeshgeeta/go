@@ -16,9 +16,11 @@ type ExecutorPool struct {
 // wfa: wait for availability in the queue for an executor
 func NewExecutorPool(async int, blocked int, qc int, wfa bool) *ExecutorPool {
 	es := new(ExecutorPool)
+	es.asyncExecutors = make([]Executor, async)
 	for i := 0; i < async; i++ {
 		es.asyncExecutors[i] = NewExecutor(qc, wfa)
 	}
+	es.blockingExecutors = make([]Executor, blocked)
 	for i := 0; i < blocked; i++ {
 		es.blockingExecutors[i] = NewExecutor(qc, wfa)
 	}

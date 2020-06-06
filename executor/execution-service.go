@@ -3,6 +3,11 @@
 
 package executor
 
+import (
+	"github.com/umeshgeeta/go/util"
+	"log"
+)
+
 const DefaultTaskQueueCapacity = 5
 const WaitForExecutorAvailDefault = false
 const WaitForChannelAvailDefault = false
@@ -13,6 +18,7 @@ type ExecutionService struct {
 }
 
 func NewExecutionService(execsForBlockingTasks int, execsForAsyncTasks int) *ExecutionService {
+	util.InitializeLog("./log/test.log", 10, 2, 5, false)
 	es := new(ExecutionService)
 	es.TaskDispatcher = NewDispatcher(execsForBlockingTasks+execsForAsyncTasks,
 		DefaultTaskResultChannelCapacity,
@@ -21,6 +27,7 @@ func NewExecutionService(execsForBlockingTasks int, execsForAsyncTasks int) *Exe
 			DefaultTaskQueueCapacity,
 			WaitForExecutorAvailDefault),
 		WaitForChannelAvailDefault)
+	log.Printf("Started ExecutorService")
 	return es
 }
 
