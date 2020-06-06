@@ -4,11 +4,11 @@
 package smi
 
 import (
-	"../util"
 	"bytes"
 	"crypto/x509"
 	"encoding/json"
 	"fmt"
+	"github.com/umeshgeeta/go/util"
 	"io/ioutil"
 	"log"
 	"net/http"
