@@ -11,6 +11,16 @@ type ExecutorPool struct {
 	blockingExecutors []Executor
 }
 
+type ExecPoolCfg struct {
+
+	// Number of executors which will be used to handle async tasks
+	AsyncTaskExecutorCount		int
+
+	// Number of executors which will be used to hand blocking task,
+	// caller is waiting for the execution result.
+	BlockingTaskExecutorCount	int
+}
+
 // async: how many executors for execution of async tasks
 // blocked: how many executors for execution of blocked tasks
 // wfa: wait for availability in the queue for an executor

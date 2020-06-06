@@ -42,6 +42,20 @@ type Executor interface {
 	Stop()
 }
 
+// Executor configuration parameters
+type ExecCfg struct {
+
+	// How many maximum number tasks accepted by the executor when it is
+	// already executing a task. These tasks will form the queue.
+	TaskQueueCapacity		int
+
+	// If true, despite the full task queue capacity, caller invoking
+	// Submit method will wait i.e. will be blocked. By default we keep it
+	// false. So once the task queue is full, subsequent attempts to add a task
+	// will fail as long as the queue if filled.
+	WaitForAvailability		bool
+}
+
 // We model thread struct as a standard executor. It is a frugal attempt to
 // model Java thread Object. The run method on this struct, a private method,
 // so outside modules cannot call it directly; is basically an infinite loop

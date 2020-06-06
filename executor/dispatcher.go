@@ -18,6 +18,19 @@ type Dispatcher struct {
 	waitingTasks map[int]waitingTask
 }
 
+type DispatcherCfg struct {
+
+	// Number of channels used to receive back task execution results
+	ChannelCount		int
+
+	// Channel buffer size
+	ChannelCapacity		int
+
+	// Whether caller should wait for response channel availability while
+	// submitting a task
+	WaitForChanAvail	bool
+}
+
 // create a dispatcher with the given number of Response channel counts
 // max channel count should be equal to number of executors in the executor pool
 // if tasks are generally very short running, channels can be less

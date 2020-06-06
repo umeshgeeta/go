@@ -17,6 +17,14 @@ type ExecutionService struct {
 	TaskDispatcher *Dispatcher
 }
 
+// Configuration for the entire execution service which comprises of
+// configuration for Dispatcher, Executor Pool and for each Executor.
+type ExecServiceCfg struct {
+	Dispatcher		DispatcherCfg
+	ExexPool		ExecPoolCfg
+	Executor		ExecCfg
+}
+
 func NewExecutionService(execsForBlockingTasks int, execsForAsyncTasks int) *ExecutionService {
 	util.InitializeLog("./log/test.log", 10, 2, 5, false)
 	es := new(ExecutionService)
