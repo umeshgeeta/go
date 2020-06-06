@@ -8,6 +8,8 @@ This repository contains various go coding programs I have undertaken which I am
 
 3) The folder 'src/smi' contains basic HTTPS client-server (and works via browser to server as well) skeleton implementation. How to log-in to Facebook that is implemented in this example. (More ambitious code sharing under this umbrella will have to wait as I work through 'ownership' issues.)
 
+4) Typically projects under 'src' are non=module while folders at the level of 'src' will be Go Module (except cfg and test) like for exanple 'util'.
+
 Feel free to reach out to me (umesh409@yahoo.com) for:
 
 - how to use the code mentioned here, or
