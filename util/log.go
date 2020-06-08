@@ -33,6 +33,10 @@ type LoggingCfg struct {
 	DebugLog     bool
 }
 
+// Name of the Json element in any Json Configuration file which contains
+// LoggingCfg structure value.
+const LoggingCfgJsonElementName = "LogSettings"
+
 var GlobalLogSettings *LoggingCfg = new(LoggingCfg) // all bool settings false by default
 
 // Initialize logging to given inputs:
@@ -70,7 +74,7 @@ func SetLoggingCfg(ls *LoggingCfg) {
 // log setting configuration.
 func SetLogSettings(cfgFileName string) {
 	if len(cfgFileName) > 0 {
-		ls, err := extractLogSettings(cfgFileName)
+		ls, err := ExtractCfgJsonElement(cfgFileName, LoggingCfgJsonElementName)
 		if err != nil {
 			fmt.Println(fmt.Sprintf("Error extracting LogSettings from the given config file (%s): %v\n", cfgFileName, err))
 		} else {
