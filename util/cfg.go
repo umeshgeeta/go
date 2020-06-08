@@ -52,8 +52,8 @@ func GetCfgHomeDir() (string, error) {
 	return cfgHome.Dir, err
 }
 
-// Return the byte array of LogSettings in the passed filename.
-func extractLogSettings(fileName string) (string, error) {
+// Return the byte array of specified config element in the passed filename.
+func ExtractCfgJsonElement(fileName string, cfgJsonElementName string) (string, error) {
 	err := cleanenv.ReadEnv(&cfgHome)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Error reading environment variable GO_CFG_HOME: %v", err))
@@ -74,8 +74,8 @@ func extractLogSettings(fileName string) (string, error) {
 	var result map[string]interface{}
 	json.Unmarshal([]byte(byteValue), &result)
 
-	// get value of log settings
-	rr := result["LogSettings"]
+	// get value of requested cfg element
+	rr := result[cfgJsonElementName]
 	fmt.Printf("LogSettings: %v\n", rr)
 	buf, err := json.Marshal(rr)
 	fmt.Println(string(buf))
