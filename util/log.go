@@ -7,12 +7,14 @@
 //
 // 2) Alternatively, assuming caller has used 'cfg' program in the 'util' package,
 // that 'uber' configuration file can be passed as long as it has a JSON member
-// of name "LogSettings". Note the environment variable GO_CFG_HOME needs to be
-// set for this option to work. The value of this environmental variable should
-// point to a directory which contains the configuration file which has the
-// JSON member LogSettings.
+// of name "LogSettings". The configuration file can be passed:
+// - either with the absolute path
+// - or the file name only in which case GP_CFG_HOME environment variable value
+// is used as the directory name where the give configuration file is located.
 //
 // 3) Finally, caller can explicitly call InitializeLog method with arguments.
+// The file path can be absolute. It is not absolute, it is appended to the
+// current working directory.
 package util
 
 import (
