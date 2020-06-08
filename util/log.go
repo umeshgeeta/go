@@ -1,9 +1,7 @@
 // MIT License
 // Author: Umesh Patil, Neosemantix, Inc.
 
-package util
-
-// There are threee methods to initialize logs and set log settings:
+// There are three methods to initialize logs and set log settings:
 //
 // 1) Caller can pass LoggingCfg structure as defined here to initialize logs.
 //
@@ -15,6 +13,7 @@ package util
 // JSON member LogSettings.
 //
 // 3) Finally, caller can explicitly call InitializeLog method with arguments.
+package util
 
 import (
 	"encoding/json"
@@ -66,6 +65,9 @@ func SetLoggingCfg(ls *LoggingCfg) {
 	}
 }
 
+// It assumes argument configuration file in JSON format and it contains an
+// element named LogSettings. Contents of that member are used to build the
+// log setting configuration.
 func SetLogSettings(cfgFileName string) {
 	if len(cfgFileName) > 0 {
 		ls, err := extractLogSettings(cfgFileName)
