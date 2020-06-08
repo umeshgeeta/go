@@ -4,7 +4,7 @@
 package main
 
 import (
-	"github.com/umeshgeeta/go/util"
+	"../../util"
 )
 
 // Simple test to ensure that logs are created correctly.

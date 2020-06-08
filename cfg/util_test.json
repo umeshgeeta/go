@@ -1,0 +1,14 @@
+{ 
+	"AppName" : "TestUtilApp",
+
+	"LogSettings" : {
+  				"LogFileName": "test22.log",
+  				"MaxSizeInMb": 3,
+  				"Backups": 5,
+  				"AgeInDays": 7,
+  				"Compress": false,
+  				"LogOnConsole": true,
+  				"DebugLog": true
+			}
+
+}

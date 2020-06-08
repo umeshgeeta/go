@@ -3,19 +3,38 @@
 
 package util
 
+// There are threee methods to initialize logs and set log settings:
+//
+// 1) Caller can pass LoggingCfg structure as defined here to initialize logs.
+//
+// 2) Alternatively, assuming caller has used 'cfg' program in the 'util' package,
+// that 'uber' configuration file can be passed as long as it has a JSON member
+// of name "LogSettings". Note the environment variable GO_CFG_HOME needs to be
+// set for this option to work. The value of this environmental variable should
+// point to a directory which contains the configuration file which has the
+// JSON member LogSettings.
+//
+// 3) Finally, caller can explicitly call InitializeLog method with arguments.
+
 import (
+	"encoding/json"
 	"fmt"
 	"gopkg.in/natefinch/lumberjack.v2"
 	"log"
 	"path/filepath"
 )
 
-type LogSettings struct {
-	LogOnConsole	bool
-	DebugLog		bool
+type LoggingCfg struct {
+	LogFileName  string
+	MaxSizeInMb  int
+	Backups      int
+	AgeInDays    int
+	Compress     bool
+	LogOnConsole bool
+	DebugLog     bool
 }
 
-var GlobalLogSettings *LogSettings = new(LogSettings)	// all bool settings false by default
+var GlobalLogSettings *LoggingCfg = new(LoggingCfg) // all bool settings false by default
 
 // Initialize logging to given inputs:
 // fn	:	Log files with fill path
@@ -28,8 +47,8 @@ func InitializeLog(fn string, ms int, bk int, age int, compress bool) {
 		Filename:   fn,
 		MaxSize:    ms, // megabytes
 		MaxBackups: bk,
-		MaxAge:     age, //days
-		Compress:   compress,     // disabled by default
+		MaxAge:     age,      //days
+		Compress:   compress, // disabled by default
 	})
 	logFilePath, _ := filepath.Abs(fn)
 	log.Printf("logFilePath: %s\n", logFilePath)
@@ -38,7 +57,54 @@ func InitializeLog(fn string, ms int, bk int, age int, compress bool) {
 	}
 }
 
-// Log given message.
+func SetLoggingCfg(ls *LoggingCfg) {
+	if ls != nil {
+		GlobalLogSettings = ls
+		InitializeLog(ls.LogFileName, ls.MaxSizeInMb, ls.Backups, ls.AgeInDays, ls.Compress)
+	} else {
+		log.Fatal("Logging configuration is nil")
+	}
+}
+
+func SetLogSettings(cfgFileName string) {
+	if len(cfgFileName) > 0 {
+		ls, err := extractLogSettings(cfgFileName)
+		if err != nil {
+			fmt.Println(fmt.Sprintf("Error extracting LogSettings from the given config file (%s): %v\n", cfgFileName, err))
+		} else {
+			ls, err := formLoggingCfg(ls)
+			if err != nil {
+				fmt.Println(fmt.Sprintf("Error forming LoggingCfg from the given config file (%s): %v\n", cfgFileName, err))
+			} else {
+				SetLoggingCfg(ls)
+				// Log the setting values which will be used
+				Log(fmt.Sprintf("Log Settings: %v\n", ls))
+			}
+		}
+	} else {
+		msg := "configuration file is nil"
+		fmt.Println(msg)
+		log.Fatal(msg)
+	}
+}
+
+func formLoggingCfg(ls string) (*LoggingCfg, error) {
+	var lc LoggingCfg
+	err := json.Unmarshal([]byte(ls), &lc)
+	return &lc, err
+}
+
+// Enable or disable the console logging
+func SetConsoleLog(val bool) {
+	GlobalLogSettings.LogOnConsole = val
+}
+
+// Enable or disable debug logging.
+func SetDeubgLog(val bool) {
+	GlobalLogSettings.DebugLog = val
+}
+
+// Log the given message.
 func Log(msg string) {
 	log.Println(msg)
 	if GlobalLogSettings.LogOnConsole {
@@ -46,7 +112,8 @@ func Log(msg string) {
 	}
 }
 
-// Log debug message.
+// Log debug messages. Invocation of this call will result in adding the message
+// to the log provided SetDebugLog(true) is called.
 func LogDebug(msg string) {
 	if GlobalLogSettings.DebugLog {
 		Log(msg)
