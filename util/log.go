@@ -44,6 +44,7 @@ type LoggingCfg struct {
 // LoggingCfg structure value.
 const LoggingCfgJsonElementName = "LogSettings"
 
+// Pointer to a structure which holds log settings in effect.
 var GlobalLogSettings *LoggingCfg
 
 // Initialize logging to given inputs:
