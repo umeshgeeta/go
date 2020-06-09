@@ -91,7 +91,7 @@ func SetLogSettings(cfgFileName string) {
 		if err != nil {
 			fmt.Println(fmt.Sprintf("Error extracting LogSettings from the given config file (%s): %v\n", cfgFileName, err))
 		} else {
-			ls, err := formLoggingCfg(ls)
+			ls, err := FormLoggingCfg(ls)
 			if err != nil {
 				fmt.Println(fmt.Sprintf("Error forming LoggingCfg from the given config file (%s): %v\n", cfgFileName, err))
 			} else {
@@ -107,7 +107,8 @@ func SetLogSettings(cfgFileName string) {
 	}
 }
 
-func formLoggingCfg(ls string) (*LoggingCfg, error) {
+// Make logging configuration struct from the given input string.
+func FormLoggingCfg(ls []byte) (*LoggingCfg, error) {
 	var lc LoggingCfg
 	err := json.Unmarshal([]byte(ls), &lc)
 	return &lc, err
