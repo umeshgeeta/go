@@ -15,6 +15,11 @@
 // 3) Finally, caller can explicitly call InitializeLog method with arguments.
 // The file path can be absolute. It is not absolute, it is appended to the
 // current working directory.
+//
+// Until LoggingCfg is set, GlobalLogSettings will be nil. All log calls will be
+// handled by the built in logging facility of Golang. Once the logging is
+// initialized by one of the above mentioned 3 methods; log calls will be
+// directing the output to the specified rotating log file.
 package util
 
 import (
@@ -39,7 +44,7 @@ type LoggingCfg struct {
 // LoggingCfg structure value.
 const LoggingCfgJsonElementName = "LogSettings"
 
-var GlobalLogSettings *LoggingCfg = new(LoggingCfg) // all bool settings false by default
+var GlobalLogSettings *LoggingCfg
 
 // Initialize logging to given inputs:
 // fn	:	Log files with fill path
@@ -57,14 +62,20 @@ func InitializeLog(fn string, ms int, bk int, age int, compress bool) {
 	})
 	logFilePath, _ := filepath.Abs(fn)
 	log.Printf("logFilePath: %s\n", logFilePath)
+	GlobalLogSettings = &LoggingCfg{}
+	GlobalLogSettings.LogFileName = fn
+	GlobalLogSettings.MaxSizeInMb = ms
+	GlobalLogSettings.Backups = bk
+	GlobalLogSettings.AgeInDays = age
+	GlobalLogSettings.Compress = compress
 	if GlobalLogSettings.LogOnConsole {
+		// typically it will be false when GlobalLogSettings is created
 		fmt.Printf("logFilePath: %s\n", logFilePath)
 	}
 }
 
 func SetLoggingCfg(ls *LoggingCfg) {
 	if ls != nil {
-		GlobalLogSettings = ls
 		InitializeLog(ls.LogFileName, ls.MaxSizeInMb, ls.Backups, ls.AgeInDays, ls.Compress)
 	} else {
 		log.Fatal("Logging configuration is nil")
@@ -76,7 +87,7 @@ func SetLoggingCfg(ls *LoggingCfg) {
 // log setting configuration.
 func SetLogSettings(cfgFileName string) {
 	if len(cfgFileName) > 0 {
-		ls, err := ExtractCfgJsonElement(cfgFileName, LoggingCfgJsonElementName)
+		ls, err := ExtractCfgJsonEleFromFile(cfgFileName, LoggingCfgJsonElementName)
 		if err != nil {
 			fmt.Println(fmt.Sprintf("Error extracting LogSettings from the given config file (%s): %v\n", cfgFileName, err))
 		} else {
@@ -125,5 +136,14 @@ func Log(msg string) {
 func LogDebug(msg string) {
 	if GlobalLogSettings.DebugLog {
 		Log(msg)
+	}
+}
+
+// Indicates whether logging has been configured or not.
+func IsLoggingConfigured() bool {
+	if GlobalLogSettings != nil {
+		return true
+	} else {
+		return false
 	}
 }
