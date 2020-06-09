@@ -14,25 +14,25 @@ type ExecutorPool struct {
 type ExecPoolCfg struct {
 
 	// Number of executors which will be used to handle async tasks
-	AsyncTaskExecutorCount		int
+	AsyncTaskExecutorCount		int `json:"async_task_executor_count"`
 
 	// Number of executors which will be used to hand blocking task,
 	// caller is waiting for the execution result.
-	BlockingTaskExecutorCount	int
+	BlockingTaskExecutorCount	int `json:"blocking_task_executor_count"`
 }
 
 // async: how many executors for execution of async tasks
 // blocked: how many executors for execution of blocked tasks
 // wfa: wait for availability in the queue for an executor
-func NewExecutorPool(async int, blocked int, qc int, wfa bool) *ExecutorPool {
+func NewExecutorPool(epCfg ExecPoolCfg, cfg ExecCfg) *ExecutorPool {
 	es := new(ExecutorPool)
-	es.asyncExecutors = make([]Executor, async)
-	for i := 0; i < async; i++ {
-		es.asyncExecutors[i] = NewExecutor(qc, wfa)
+	es.asyncExecutors = make([]Executor, epCfg.AsyncTaskExecutorCount)
+	for i := 0; i < epCfg.AsyncTaskExecutorCount; i++ {
+		es.asyncExecutors[i] = NewExecutor(cfg)
 	}
-	es.blockingExecutors = make([]Executor, blocked)
-	for i := 0; i < blocked; i++ {
-		es.blockingExecutors[i] = NewExecutor(qc, wfa)
+	es.blockingExecutors = make([]Executor, epCfg.BlockingTaskExecutorCount)
+	for i := 0; i < epCfg.BlockingTaskExecutorCount; i++ {
+		es.blockingExecutors[i] = NewExecutor(cfg)
 	}
 	return es
 }

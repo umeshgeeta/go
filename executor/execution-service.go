@@ -4,14 +4,12 @@
 package executor
 
 import (
+	"encoding/json"
+	"fmt"
+	"github.com/gobuffalo/packr/v2"
 	"github.com/umeshgeeta/go/util"
 	"log"
 )
-
-const DefaultTaskQueueCapacity = 5
-const WaitForExecutorAvailDefault = false
-const WaitForChannelAvailDefault = false
-const DefaultTaskResultChannelCapacity = 1
 
 type ExecutionService struct {
 	TaskDispatcher *Dispatcher
@@ -20,22 +18,90 @@ type ExecutionService struct {
 // Configuration for the entire execution service which comprises of
 // configuration for Dispatcher, Executor Pool and for each Executor.
 type ExecServiceCfg struct {
-	Dispatcher		DispatcherCfg
-	ExexPool		ExecPoolCfg
-	Executor		ExecCfg
+	Dispatcher		DispatcherCfg 		`json:"DispatcherSettings"`
+	ExexPool		ExecPoolCfg 		`json:"ExecPoolSettings"`
+	Executor		ExecCfg 			`json:"ExecutorSettings"`
 }
 
-func NewExecutionService(execsForBlockingTasks int, execsForAsyncTasks int) *ExecutionService {
-	util.InitializeLog("./log/test.log", 10, 2, 5, false)
+// Name of the Json element in any Json Configuration file which contains
+// ExecServiceCfg structure value. Note that we do not support only part
+// settings, the constant refers to a Json segment which will contain
+// values for all 3 config structures.
+const ExecServiceCfgJsonElementName = "ExecServiceSettings"
+
+// Name of a configuration file which contains default values; in the same
+// folder where you would find execution-service.go. If user allows to use
+// the default configuration, then in absence of user provided configuration
+// values in this file will be used.
+const DefaultCfgFileName = "default-cfg.json"
+
+var StaticBox *packr.Box
+
+var GlobalExecServiceCfg *ExecServiceCfg
+
+// Initialize the box so that static files are available for consumption.
+// Default configuration file is one important static content file.
+func init() {
+	StaticBox = packr.New("Static Files", "./static")
+}
+
+// Caller can pass the configuration file name which will contain all parameters
+// needed to start the execution service. The file will be searched in the
+// directory as pointed by the environmental variable GO_CFG_HOME. If the
+// environmental variable is not set or file is not found; caller can indicate
+// whether default configuration file is to be used or not. If configuration is
+// found, method returns with a Fatal Log call.
+func NewExecutionService(cfgFileName string, useDefault bool) *ExecutionService {
+	cfg, err := util.ExtractCfgJsonEleFromFile(cfgFileName, ExecServiceCfgJsonElementName)
+	if err != nil {
+		if useDefault {
+			cfgJsonBa, err := StaticBox.Find(DefaultCfgFileName)
+			if err != nil {
+				msg := fmt.Sprintf("Invalid config file name %s and error %v while sourcing default config file. " +
+					"Pass second argument true to use default config file or fix te config file issues.\n", cfgFileName, err)
+				fmt.Print(msg)
+				log.Fatal(msg)
+			} else {
+				cfg, err = util.ExtractCfgJsonEleFromBytes(cfgJsonBa, ExecServiceCfgJsonElementName)
+				if err != nil {
+					msg := fmt.Sprintf("Error reading configuration: %v\n", err)
+					fmt.Print(msg)
+					log.Fatal(msg)
+				}
+			}
+		} else {
+			msg := fmt.Sprintf("Invalid config file name %s and default config file not allowed. " +
+				"Pass second argument true to use default config file or fix te config file issues.\n", cfgFileName)
+			fmt.Print(msg)
+			log.Fatal(msg)
+		}
+	}
+	err = json.Unmarshal([]byte(cfg), &GlobalExecServiceCfg)
+	if err != nil {
+		msg := fmt.Sprintf("Error parsing configuration: %v\n", err)
+		fmt.Print(msg)
+		log.Fatal(msg)
+	}
+	// let us see if logging configuration is set or not; else we try default
+	if !util.IsLoggingConfigured() {
+		logCfgJsonBa, err := StaticBox.Find(DefaultCfgFileName)
+		if err == nil {
+			// form the logging configuration and set it
+			fmt.Println(logCfgJsonBa)
+			//logCfg, err = util.ExtractCfgJsonEleFromBytes(cfgJsonBa, util.LoggingCfgJsonElementName)
+			//if err == nil {
+			//	util.SetLoggingCfg()		// util.InitializeLog("./log/test.log", 10, 2, 5, false)?
+			//}
+		}
+		// else got an error getting default logging configuration,
+		// we will fall back to default go lang builtin logging
+	}
+	// else if it configured, nothing to worry
+
 	es := new(ExecutionService)
-	es.TaskDispatcher = NewDispatcher(execsForBlockingTasks+execsForAsyncTasks,
-		DefaultTaskResultChannelCapacity,
-		NewExecutorPool(execsForAsyncTasks,
-			execsForBlockingTasks,
-			DefaultTaskQueueCapacity,
-			WaitForExecutorAvailDefault),
-		WaitForChannelAvailDefault)
-	log.Printf("Started ExecutorService")
+	es.TaskDispatcher = NewDispatcher(GlobalExecServiceCfg.Dispatcher,
+		NewExecutorPool(GlobalExecServiceCfg.ExexPool, GlobalExecServiceCfg.Executor))
+	util.Log("Started ExecutorService")
 	return es
 }
 
@@ -45,7 +111,7 @@ func (es *ExecutionService) Start() {
 
 func (es *ExecutionService) Submit(tsk Task) (error, *Response) {
 	return es.TaskDispatcher.Submit(tsk)
-}
+ }
 
 func (es *ExecutionService) Stop() {
 	es.TaskDispatcher.Stop()

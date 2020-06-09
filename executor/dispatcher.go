@@ -21,14 +21,14 @@ type Dispatcher struct {
 type DispatcherCfg struct {
 
 	// Number of channels used to receive back task execution results
-	ChannelCount		int
+	ChannelCount		int `json:"channel_count"`
 
 	// Channel buffer size
-	ChannelCapacity		int
+	ChannelCapacity		int `json:"channel_capacity"`
 
 	// Whether caller should wait for response channel availability while
 	// submitting a task
-	WaitForChanAvail	bool
+	WaitForChanAvail	bool `json:"wait_for_chan_avail"`
 }
 
 // create a dispatcher with the given number of Response channel counts
@@ -50,13 +50,13 @@ type DispatcherCfg struct {
 //
 // wfc: whether to block the submission for availability a channel to hear back
 // the task result. It does not apply for async tasks.
-func NewDispatcher(cc int, cp int, ep *ExecutorPool, wfc bool) *Dispatcher {
+func NewDispatcher(cfg DispatcherCfg, ep *ExecutorPool) *Dispatcher {
 	var disp Dispatcher
 	disp.waitingTasks = make(map[int]waitingTask)
-	disp.respChans = newRC(cc, cp, wfc, &disp.waitingTasks)
+	disp.respChans = newRC(cfg.ChannelCount, cfg.ChannelCapacity, cfg.WaitForChanAvail, &disp.waitingTasks)
 	disp.execPool = ep
-	disp.waitForChan = wfc
-	disp.chanCount = cc
+	disp.waitForChan = cfg.WaitForChanAvail
+	disp.chanCount = cfg.ChannelCount
 	return &disp
 }
 

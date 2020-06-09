@@ -47,13 +47,13 @@ type ExecCfg struct {
 
 	// How many maximum number tasks accepted by the executor when it is
 	// already executing a task. These tasks will form the queue.
-	TaskQueueCapacity		int
+	TaskQueueCapacity		int `json:"task_queue_capacity"`
 
 	// If true, despite the full task queue capacity, caller invoking
 	// Submit method will wait i.e. will be blocked. By default we keep it
 	// false. So once the task queue is full, subsequent attempts to add a task
 	// will fail as long as the queue if filled.
-	WaitForAvailability		bool
+	WaitForAvailability		bool `json:"wait_for_availability"`
 }
 
 // We model thread struct as a standard executor. It is a frugal attempt to
@@ -143,13 +143,13 @@ func (t *thread) WaitForAvailability(wfa bool) {
 	t.waitForAvailability = wfa
 }
 
-func NewExecutor(qc int, wfa bool) Executor {
+func NewExecutor(cfg ExecCfg) Executor {
 	// We start a thread with 'continueRun' as false so that the caller needs to explicitly
 	// invoke Start on the thread where queue capacity is built and any other initialization.
 	t := new(thread)
-	t.waitForAvailability = wfa
+	t.waitForAvailability = cfg.WaitForAvailability
 	t.mux = sync.Mutex{}
-	t.queueCapacity = qc
+	t.queueCapacity = cfg.TaskQueueCapacity
 	return t
 }
 
