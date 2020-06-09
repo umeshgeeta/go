@@ -5,14 +5,20 @@ package main
 
 import (
 	"../../util"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
-// Simple test to ensure that logs are created correctly.
-func main() {
+func TestLog(t *testing.T) {
+	assert := assert.New(t)
+	assert.False(util.IsLoggingConfigured())
+
 	util.InitializeLog("./log/test.log", 10, 2, 5, false)
-	util.GlobalLogSettings.LogOnConsole = true
+	util.SetConsoleLog(true)
 	util.Log("Started log")
-	util.GlobalLogSettings.DebugLog = true
+	util.SetDeubgLog(true)
 	util.LogDebug("Debug log should come up as well")
 	util.Log("End log")
+
+	assert.True(util.IsLoggingConfigured())
 }

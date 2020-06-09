@@ -53,12 +53,12 @@ func GetCfgHomeDir() (string, error) {
 	return cfgHome.Dir, err
 }
 
-// Return the byte array of specified config element in the passed filename.
-// If file name is with the absolute path, reading is attempted on for that
-// location, else the given file name is looked up in to directory as pointed
-// by GO_CFG_HOME. Second argument is the name of the configuration structure
-// member caller wants to parse.
-func ExtractCfgJsonElement(fileName string, cfgJsonElementName string) (string, error) {
+// Returns the json segment of specified config element in the passed filename.
+// If file name is with the absolute path, reading is attempted for that
+// location, else the given file name is looked up in to the directory as
+// pointed by GO_CFG_HOME. Second argument is the name of the configuration
+// structure member caller is seeking.
+func ExtractCfgJsonEleFromFile(fileName string, cfgJsonElementName string) (string, error) {
 	cfgFileName := makeCfgFilePath(fileName)
 	// Open our jsonFile
 	jsonFile, err := os.Open(cfgFileName)
@@ -67,10 +67,19 @@ func ExtractCfgJsonElement(fileName string, cfgJsonElementName string) (string, 
 		return "", err
 	}
 	defer jsonFile.Close()
+	byteValue, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return "", err
+	}
+	return ExtractCfgJsonEleFromBytes(byteValue, cfgJsonElementName)
+}
 
-	byteValue, _ := ioutil.ReadAll(jsonFile)
+// Returns the json segment of the specified config element in the passed byte
+// array. Second argument is the name of the configuration structure member
+// caller is seeking.
+func ExtractCfgJsonEleFromBytes(byteValue []byte, cfgJsonElementName string) (string, error) {
 	var result map[string]interface{}
-	json.Unmarshal([]byte(byteValue), &result)
+	json.Unmarshal(byteValue, &result)
 
 	// get value of requested cfg element
 	rr := result[cfgJsonElementName]
