@@ -12,15 +12,15 @@ import (
 )
 
 type ExecutionService struct {
-	TaskDispatcher *Dispatcher
+	taskDispatcher *Dispatcher
 }
 
 // Configuration for the entire execution service which comprises of
 // configuration for Dispatcher, Executor Pool and for each Executor.
 type ExecServiceCfg struct {
-	Dispatcher		DispatcherCfg 		`json:"DispatcherSettings"`
-	ExexPool		ExecPoolCfg 		`json:"ExecPoolSettings"`
-	Executor		ExecCfg 			`json:"ExecutorSettings"`
+	Dispatcher DispatcherCfg `json:"DispatcherSettings"`
+	ExexPool   ExecPoolCfg   `json:"ExecPoolSettings"`
+	Executor   ExecCfg       `json:"ExecutorSettings"`
 }
 
 // Name of the Json element in any Json Configuration file which contains
@@ -57,7 +57,7 @@ func NewExecutionService(cfgFileName string, useDefault bool) *ExecutionService 
 		if useDefault {
 			cfgJsonBa, err := StaticBox.Find(DefaultCfgFileName)
 			if err != nil {
-				msg := fmt.Sprintf("Invalid config file name %s and error %v while sourcing default config file. " +
+				msg := fmt.Sprintf("Invalid config file name %s and error %v while sourcing default config file. "+
 					"Pass second argument true to use default config file or fix te config file issues.\n", cfgFileName, err)
 				fmt.Print(msg)
 				log.Fatal(msg)
@@ -70,13 +70,13 @@ func NewExecutionService(cfgFileName string, useDefault bool) *ExecutionService 
 				}
 			}
 		} else {
-			msg := fmt.Sprintf("Invalid config file name %s and default config file not allowed. " +
+			msg := fmt.Sprintf("Invalid config file name %s and default config file not allowed. "+
 				"Pass second argument true to use default config file or fix te config file issues.\n", cfgFileName)
 			fmt.Print(msg)
 			log.Fatal(msg)
 		}
 	}
-	err = json.Unmarshal([]byte(cfg), &GlobalExecServiceCfg)
+	err = json.Unmarshal(cfg, &GlobalExecServiceCfg)
 	if err != nil {
 		msg := fmt.Sprintf("Error parsing configuration: %v\n", err)
 		fmt.Print(msg)
@@ -87,11 +87,11 @@ func NewExecutionService(cfgFileName string, useDefault bool) *ExecutionService 
 		logCfgJsonBa, err := StaticBox.Find(DefaultCfgFileName)
 		if err == nil {
 			// form the logging configuration and set it
-			fmt.Println(logCfgJsonBa)
-			//logCfg, err = util.ExtractCfgJsonEleFromBytes(cfgJsonBa, util.LoggingCfgJsonElementName)
-			//if err == nil {
-			//	util.SetLoggingCfg()		// util.InitializeLog("./log/test.log", 10, 2, 5, false)?
-			//}
+			logCfgBa, err := util.ExtractCfgJsonEleFromBytes(logCfgJsonBa, util.LoggingCfgJsonElementName)
+			logCfg, err := util.FormLoggingCfg(logCfgBa)
+			if err == nil {
+				util.SetLoggingCfg(logCfg)
+			}
 		}
 		// else got an error getting default logging configuration,
 		// we will fall back to default go lang builtin logging
@@ -99,20 +99,20 @@ func NewExecutionService(cfgFileName string, useDefault bool) *ExecutionService 
 	// else if it configured, nothing to worry
 
 	es := new(ExecutionService)
-	es.TaskDispatcher = NewDispatcher(GlobalExecServiceCfg.Dispatcher,
+	es.taskDispatcher = NewDispatcher(GlobalExecServiceCfg.Dispatcher,
 		NewExecutorPool(GlobalExecServiceCfg.ExexPool, GlobalExecServiceCfg.Executor))
-	util.Log("Started ExecutorService")
+	util.Log(fmt.Sprintf("Started ExecutorService %v", es))
 	return es
 }
 
 func (es *ExecutionService) Start() {
-	es.TaskDispatcher.Start()
+	es.taskDispatcher.Start()
 }
 
 func (es *ExecutionService) Submit(tsk Task) (error, *Response) {
-	return es.TaskDispatcher.Submit(tsk)
- }
+	return es.taskDispatcher.Submit(tsk)
+}
 
 func (es *ExecutionService) Stop() {
-	es.TaskDispatcher.Stop()
+	es.taskDispatcher.Stop()
 }

@@ -15,7 +15,7 @@
 	}
   },
   "LogSettings": {
-	"LogFileName": "executor.log",
+	"LogFileName": "./log/executor.log",
 	"MaxSizeInMb": 3,
 	"Backups": 5,
 	"AgeInDays": 7,

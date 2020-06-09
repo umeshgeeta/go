@@ -11,8 +11,8 @@ import (
 // Dispatcher type which hold reference to executor pool, channels used for
 // getting back task execution results and go routines waiting on task results.
 type Dispatcher struct {
-	respChans    *responseChannels
 	execPool     *ExecutorPool
+	respChans    *responseChannels
 	chanCount    int
 	waitForChan  bool
 	waitingTasks map[int]waitingTask
@@ -21,14 +21,14 @@ type Dispatcher struct {
 type DispatcherCfg struct {
 
 	// Number of channels used to receive back task execution results
-	ChannelCount		int `json:"channel_count"`
+	ChannelCount int `json:"channel_count"`
 
 	// Channel buffer size
-	ChannelCapacity		int `json:"channel_capacity"`
+	ChannelCapacity int `json:"channel_capacity"`
 
 	// Whether caller should wait for response channel availability while
 	// submitting a task
-	WaitForChanAvail	bool `json:"wait_for_chan_avail"`
+	WaitForChanAvail bool `json:"wait_for_chan_avail"`
 }
 
 // create a dispatcher with the given number of Response channel counts

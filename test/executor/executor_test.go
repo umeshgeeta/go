@@ -23,7 +23,11 @@ func TestMain(m *testing.M) {
 
 func TestExecutorFailSubmission(t *testing.T) {
 	//t.SkipNow()
-	thread := executor.NewExecutor(2, false)
+	execCfg := &executor.ExecCfg{
+		TaskQueueCapacity:   2,
+		WaitForAvailability: false,
+	}
+	thread := executor.NewExecutor(*execCfg)
 	task := infra.NewTestTask(infra.RandomTestTaskExecTime())
 	err := thread.Submit(task)
 	assert := assert.New(t)
@@ -31,7 +35,12 @@ func TestExecutorFailSubmission(t *testing.T) {
 }
 
 func TestExecutorExecutionSuccess(t *testing.T) {
-	thread := executor.NewExecutor(2, false)
+	execCfg := &executor.ExecCfg{
+		TaskQueueCapacity:   2,
+		WaitForAvailability: false,
+	}
+
+	thread := executor.NewExecutor(*execCfg)
 	thread.Start()
 
 	task := infra.NewTestTask(10000)
