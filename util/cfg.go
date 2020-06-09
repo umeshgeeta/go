@@ -53,31 +53,31 @@ func GetCfgHomeDir() (string, error) {
 	return cfgHome.Dir, err
 }
 
-// Returns the json segment of specified config element in the passed filename.
-// If file name is with the absolute path, reading is attempted for that
-// location, else the given file name is looked up in to the directory as
-// pointed by GO_CFG_HOME. Second argument is the name of the configuration
-// structure member caller is seeking.
-func ExtractCfgJsonEleFromFile(fileName string, cfgJsonElementName string) (string, error) {
+// Returns the byte array corresponding to json segment of specified config
+// element in the passed filename. If file name is with the absolute path,
+// reading is attempted for that location, else the given file name is looked
+// up in to the directory as pointed by GO_CFG_HOME. Second argument is the
+// name of the configuration structure member caller is seeking.
+func ExtractCfgJsonEleFromFile(fileName string, cfgJsonElementName string) ([]byte, error) {
 	cfgFileName := makeCfgFilePath(fileName)
 	// Open our jsonFile
 	jsonFile, err := os.Open(cfgFileName)
 	// if we os.Open returns an error then handle it
 	if err != nil {
-		return "", err
+		return []byte{}, err
 	}
 	defer jsonFile.Close()
 	byteValue, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
-		return "", err
+		return []byte{}, err
 	}
 	return ExtractCfgJsonEleFromBytes(byteValue, cfgJsonElementName)
 }
 
-// Returns the json segment of the specified config element in the passed byte
-// array. Second argument is the name of the configuration structure member
-// caller is seeking.
-func ExtractCfgJsonEleFromBytes(byteValue []byte, cfgJsonElementName string) (string, error) {
+// Returns the byte array corresponding to json segment of the specified config
+// element in the passed byte array. Second argument is the name of the
+// configuration structure member caller is seeking.
+func ExtractCfgJsonEleFromBytes(byteValue []byte, cfgJsonElementName string) ([]byte, error) {
 	var result map[string]interface{}
 	json.Unmarshal(byteValue, &result)
 
@@ -86,7 +86,7 @@ func ExtractCfgJsonEleFromBytes(byteValue []byte, cfgJsonElementName string) (st
 	fmt.Printf("LogSettings: %v\n", rr)
 	buf, err := json.Marshal(rr)
 	fmt.Println(string(buf))
-	return string(buf), err
+	return buf, err
 }
 
 func makeCfgFilePath(fn string) string {
