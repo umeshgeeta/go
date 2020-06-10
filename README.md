@@ -8,7 +8,7 @@ This repository contains various go coding programs I have undertaken to learn G
 
 4) The folder 'src/smi' contains basic HTTPS client-server (and works via browser to server as well) skeleton implementation. How to log-in to Facebook that is implemented in this example. (More ambitious code sharing under this umbrella will have to wait as I work through 'ownership' issues.)
 
-5) Typically all of the go code here is non-module code. More usable Go packages can be found in the repository "umeshgeeta/goshared" which is Public too.
+5) Typically all of the go code here is non-module code. More usable Go packages can be found in the repository "umeshgeeta/goshared" (https://github.com/umeshgeeta/goshared) which is Public too.
 
 Feel free to reach out to me (umesh409@yahoo.com) for:
 
