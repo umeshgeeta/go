@@ -1,3 +1,9 @@
+/*
+ * MIT License
+ * Copyright (c) 2020. Neosemantix, Inc.
+ * Author: Umesh Patil
+ */
+
 // MIT License
 // Author: Umesh Patil, Neosemantix, Inc.
 
@@ -7,12 +13,19 @@ import (
 	"../../src/bt"
 	"fmt"
 	"log"
+	"os"
+	"testing"
 )
 
-// It is a launch point for Binry Tree , BST and AVL Trees. It gives some
-// sample input to validate the functionality of Binary Tree implementation
-// in 'bt' package. It attempts to print a readable binary tree.
-func main() {
+func TestMain(m *testing.M) {
+	// call flag.Parse() here if TestMain uses flags
+	os.Exit(m.Run())
+}
+
+// It is a launch point for Binry Tree , BST and AVL Trees testing. It gives
+// some sample input to validate the functionality of Binary Tree
+// implementation in 'bt' package. It attempts to print a readable binary tree.
+func TestUtilCfgLog(t *testing.T) {
 	m := make(map[int]int)
 	m[0] = 250
 	m[1] = 134
@@ -44,7 +57,6 @@ func main() {
 	//}
 	avlt := buildAvlBstFromArray(values)
 	fmt.Println(avlt.Pyramid(true))
-	fmt.Println(avlt.Inorder())
 
 	// Output should look like:
 
