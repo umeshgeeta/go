@@ -1,4 +1,4 @@
-This repository contains various go coding programs I have undertaken which I am free to share to with everyone. Here is the explanation of the content:
+This repository contains various go coding programs I have undertaken to learn Go programming language. Here is the explanation of the content:
 
 1) cfg folder contains various configuration files used in many programs. Typically, configuration files checked in here are templates and users are expected to fill in correct settings as applicable to their test / validation environment.
 
@@ -8,14 +8,14 @@ This repository contains various go coding programs I have undertaken which I am
 
 4) The folder 'src/smi' contains basic HTTPS client-server (and works via browser to server as well) skeleton implementation. How to log-in to Facebook that is implemented in this example. (More ambitious code sharing under this umbrella will have to wait as I work through 'ownership' issues.)
 
-5) Typically projects under 'src' are non=module while folders at the level of 'src' will be Go Module (except cfg and test) like for example 'util'.
+5) Typically all of the go code here is non-module code. More usable Go packages can be found in the repository "umeshgeeta/goshared" which is Public too.
 
 Feel free to reach out to me (umesh409@yahoo.com) for:
 
 - how to use the code mentioned here, or
 - if you need any additional functionality in the current code. I will try my best to have it included.
 
-Code is under MIT License, so it is least restrictive. (Please stick to 'master' branch which has working code while code in 'dev' branch is still under development and not ready for consumption.)
+Code is under MIT License, so it is least restrictive. (Please stick to 'master' branch only.)
 
 Have a look and enjoy! 
 
