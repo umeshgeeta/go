@@ -39,12 +39,16 @@ func newOcForTuple(t tuple) *orderedChars {
 
 func (oc *orderedChars) strRep() string {
 	result := ""
+	i := 0
+	ra := make([]rune, oc.size())
 	mark := oc.charList.Front()
 	for mark != nil {
-		result = result + string(mark.Value.(rune))
+		//	result = result + string(mark.Value.(rune))
+		ra[i] = mark.Value.(rune)
 		mark = mark.Next()
+		i++
 	}
-	result = result + ""
+	result = string(ra)
 	return result
 }
 
@@ -134,34 +138,69 @@ func (oc *orderedChars) consume(t tuple) (*orderedChars, int, error) {
 
 func (oc *orderedChars) merge(t *orderedChars) bool {
 	result := false
-	if t.backChar() == oc.frontChar() {
-		tt := t.clone()
-		le := tt.charList.Back()
-		tt.charList.Remove(le)
-		oc.charList.PushFrontList(tt.charList)
-		result = true
-	} else if strings.EqualFold(string(t.getChars(2, false)), string(oc.getChars(2, true))) {
-		tt := t.clone()
-		le := tt.charList.Back()
-		le2 := le.Prev()
-		tt.charList.Remove(le)
-		tt.charList.Remove(le2)
-		oc.charList.PushFrontList(tt.charList)
-		result = true
-	} else if t.frontChar() == oc.backChar() {
+	ocStr := oc.strRep()
+	tStr := t.strRep()
+	//fmt.Printf("Comparing %s with %s\n", ocStr, tStr)
+	ocl := oc.size()
+	tl := t.size()
+	leng := ocl
+	if t.size() < leng {
+		leng = tl
+	}
+	found := false
+	for leng > 0 && !found {
+		ocs := ocStr[ocl-leng:]
+		ts := tStr[0:leng]
+		if ocs == ts {
+			//fmt.Printf("match: %s leng: %d\n", ocs, leng)
+			found = true
+		} else {
+			leng--
+		}
+	}
+	if found {
+		var leNext *list.Element
 		tt := t.clone()
 		le := tt.charList.Front()
-		tt.charList.Remove(le)
+		for leng > 0 {
+			leNext = le.Next()
+			tt.charList.Remove(le)
+			le = leNext
+			leng--
+		}
 		oc.charList.PushBackList(tt.charList)
 		result = true
-	} else if strings.EqualFold(string(t.getChars(2, true)), string(oc.getChars(2, false))) {
-		tt := t.clone()
-		le := tt.charList.Front()
-		le2 := le.Next()
-		tt.charList.Remove(le)
-		tt.charList.Remove(le2)
-		oc.charList.PushBackList(tt.charList)
-		result = true
+	}
+	if !result {
+		// we try the other way
+		leng = ocl
+		if t.size() < leng {
+			leng = tl
+		}
+		found = false
+		for leng > 0 && !found {
+			ocs := ocStr[0:leng]
+			ts := tStr[tl-leng:]
+			if ocs == ts {
+				//fmt.Printf("match: %s leng: %d\n", ocs, leng)
+				found = true
+			} else {
+				leng--
+			}
+		}
+		if found {
+			var lePrev *list.Element
+			tt := t.clone()
+			le := tt.charList.Back()
+			for leng > 0 {
+				lePrev = le.Prev()
+				tt.charList.Remove(le)
+				le = lePrev
+				leng--
+			}
+			oc.charList.PushFrontList(tt.charList)
+			result = true
+		}
 	}
 	return result
 }
@@ -796,53 +835,58 @@ func (set *alphabet) letterConsumed(r rune) {
 
 func main() {
 
-	input := []string{"ze", "yf", "xd", "wd", "vd", "ua", "tt", "sz", "rd", "qd", "pz", "op", "nw", "mt", "ln", "ko", "jm", "il", "ho", "gk", "fa", "ed", "dg", "ct", "bb", "ba"}
+	input := []string{"bsusz", "rhn", "gfbrwec", "kuw", "qvpxbexnhx", "gnp", "laxutz", "qzxccww"}
+	fmt.Println(alienOrder(input)) // expected:		""	blank
+	fmt.Println()
+	reset()
+
+	input = []string{"ze", "yf", "xd", "wd", "vd", "ua", "tt", "sz", "rd", "qd", "pz", "op", "nw", "mt", "ln", "ko", "jm", "il", "ho", "gk", "fa", "ed", "dg", "ct", "bb", "ba"}
 	fmt.Println(alienOrder(input)) // expected:		"zyxwvutsrqponmlkjihgfedcba"
 	fmt.Println()
 	reset()
 
-	//input = []string{"wrt","wrtkj","wrtkjd"}
-	//fmt.Println(alienOrder(input))		// expected:		djkrtw
-	//fmt.Println()
-	//reset()
-	//
-	//input = []string{"wrt","wrtkj"}
-	//fmt.Println(alienOrder(input))		// expected:		jkrtw
-	//fmt.Println()
-	//reset()
-	//
-	//input = []string{"abc","ab"}
-	//fmt.Println(alienOrder(input))		// expected:		 empty
-	//fmt.Println()
-	//reset()
-	//
-	//input = []string{"wrt", "wrf", "er", "ett", "rftt"}
-	//fmt.Println(alienOrder(input))		// expected: wertf
-	//fmt.Println()
-	//reset()
-	//
-	//input = []string{"ac","ab","b"}
-	//fmt.Println(alienOrder(input))		// expected: acb
-	//fmt.Println()
-	//reset()
-	//
-	//input = []string{"z","x"}
-	//fmt.Println(alienOrder(input))		// expected: zx
-	//fmt.Println()
-	//reset()
-	//
-	//input = []string{"z","x","z"}
-	//fmt.Println(alienOrder(input))		// expected: 		empty
-	//fmt.Println()
-	//reset()
-	//
-	//input = []string{"z","z"}
-	//fmt.Println(alienOrder(input))		// expected: z
-	//fmt.Println()
-	//reset()
-	//
-	//input = []string{"zy","zx"}
-	//fmt.Println(alienOrder(input))		// expected yxz
-	//fmt.Println()
-	//reset()
+	input = []string{"wrt", "wrtkj", "wrtkjd"}
+	fmt.Println(alienOrder(input)) // expected:		djkrtw
+	fmt.Println()
+	reset()
+
+	input = []string{"wrt", "wrtkj"}
+	fmt.Println(alienOrder(input)) // expected:		jkrtw
+	fmt.Println()
+	reset()
+
+	input = []string{"abc", "ab"}
+	fmt.Println(alienOrder(input)) // expected:		 empty
+	fmt.Println()
+	reset()
+
+	input = []string{"wrt", "wrf", "er", "ett", "rftt"}
+	fmt.Println(alienOrder(input)) // expected: wertf
+	fmt.Println()
+	reset()
+
+	input = []string{"ac", "ab", "b"}
+	fmt.Println(alienOrder(input)) // expected: acb
+	fmt.Println()
+	reset()
+
+	input = []string{"z", "x"}
+	fmt.Println(alienOrder(input)) // expected: zx
+	fmt.Println()
+	reset()
+
+	input = []string{"z", "x", "z"}
+	fmt.Println(alienOrder(input)) // expected: 		empty
+	fmt.Println()
+	reset()
+
+	input = []string{"z", "z"}
+	fmt.Println(alienOrder(input)) // expected: z
+	fmt.Println()
+	reset()
+
+	input = []string{"zy", "zx"}
+	fmt.Println(alienOrder(input)) // expected yxz
+	fmt.Println()
+	reset()
 }
