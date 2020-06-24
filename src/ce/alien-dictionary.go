@@ -103,18 +103,45 @@ func (oc *orderedChars) insertAtStart(v interface{}) {
 	oc.charList.InsertBefore(v, start)
 }
 
-func (oc *orderedChars) appendElement(v interface{}) {
+func (oc *orderedChars) appendElement(v interface{}) *list.Element {
 	end := oc.charList.Back()
 	if end != nil {
-		oc.charList.InsertAfter(v, end)
+		return oc.charList.InsertAfter(v, end)
 	} else {
 		// it is an empty list...
-		oc.charList.PushFront(v)
+		return oc.charList.PushFront(v)
 	}
 }
 
+func (oc *orderedChars) isPresent(r rune) bool {
+	result := false
+	mark := oc.charList.Front()
+	for mark != nil && !result {
+		if mark.Value.(rune) == r {
+			result = true
+		}
+		mark = mark.Next()
+	}
+	return result
+}
+
+func (oc *orderedChars) duplicateFound() (bool, rune) {
+	m := make(map[rune]bool)
+	mark := oc.charList.Front()
+	for mark != nil {
+		r := mark.Value.(rune)
+		if m[r] {
+			// it is repeated
+			return true, r
+		} else {
+			m[r] = true
+		}
+		mark = mark.Next()
+	}
+	return false, -1
+}
+
 // Found value, second returned value:
-//					-1:	contradiction
 //					0:	no smaller or bigger char of tuple was found
 //					1:	only smaller of tuple was found
 //					2:	only bigger of tuple was found
@@ -122,21 +149,31 @@ func (oc *orderedChars) appendElement(v interface{}) {
 //					11:	Smaller appended at the start
 //					12: Bigger appended at the start
 func (oc *orderedChars) consume(t tuple) (*orderedChars, int, error) {
-	found := -1
 	if t.biggerChar == oc.frontChar() {
-		oc.insertAtStart(t.smallerChar)
-		found = 11
-		return nil, found, nil
+		if !oc.isPresent(t.smallerChar) {
+			oc.insertAtStart(t.smallerChar)
+			return nil, 11, nil
+		} else {
+			// smaller char is present, that is error
+			err := errors.New(fmt.Sprintf("Contrdiction for tuple %s", t.strRep()))
+			return nil, -1, err
+		}
 	} else if t.smallerChar == oc.backChar() {
-		oc.appendElement(t.biggerChar)
-		found = 12
-		return nil, found, nil
+		if !oc.isPresent(t.biggerChar) {
+			oc.appendElement(t.biggerChar)
+			return nil, 12, nil
+		} else {
+			// smaller char is present, that is error
+			err := errors.New(fmt.Sprintf("Contrdiction for tuple %s", t.strRep()))
+			return nil, -1, err
+		}
 	} else {
 		return oc.digest(t)
 	}
 }
 
 func (oc *orderedChars) merge(t *orderedChars) bool {
+	//fmt.Printf("oc: %s t: %s\n", oc.strRep(), t.strRep())
 	result := false
 	ocStr := oc.strRep()
 	tStr := t.strRep()
@@ -215,7 +252,7 @@ func (oc *orderedChars) digest(t tuple) (*orderedChars, int, error) {
 		if mark.Value.(rune) == t.smallerChar {
 			if bc != nil {
 				// we got bigger character before the smaller character
-				err = errors.New(fmt.Sprintf("Contrdiction for tuple %v", t))
+				err = errors.New(fmt.Sprintf("Contrdiction for tuple %s", t.strRep()))
 			}
 			sc = mark
 		} else if mark.Value.(rune) == t.biggerChar {
@@ -229,14 +266,12 @@ func (oc *orderedChars) digest(t tuple) (*orderedChars, int, error) {
 			found = 3
 		} else {
 			result = oc.cloneSlice(oc.charList.Front(), sc)
-			//result.appendElement(bc)
 			result.appendElement(t.biggerChar)
 			found = 1
 		}
 	} else {
 		if bc != nil {
 			result = oc.cloneSlice(bc, oc.charList.Back())
-			//result.insertAtStart(sc.Value)
 			result.insertAtStart(t.smallerChar)
 			found = 2
 		} else {
@@ -330,13 +365,15 @@ func (ocl *ocList) remove(ss *list.Element) *orderedChars {
 
 func (ocl *ocList) consumeATuple(t tuple) (*ocList, error) {
 	var err error
+	var oc *orderedChars
+	var found int
 	extraOcl := newOcl()
 	subsumed := false
 	notfound := true
 	mark := ocl.ocs.Front()
 	for mark != nil {
 		anOc := mark.Value.(*orderedChars)
-		oc, found, err := anOc.consume(t)
+		oc, found, err = anOc.consume(t)
 		if err != nil {
 			break
 		}
@@ -353,13 +390,13 @@ func (ocl *ocList) consumeATuple(t tuple) (*ocList, error) {
 		}
 		mark = mark.Next()
 	}
-	if notfound && !subsumed {
+	if err == nil && notfound && !subsumed {
 		extraOcl.ocs.PushBack(newOcForTuple(t))
 	}
 	return extraOcl, err
 }
 
-func (ocl *ocList) consume(ts []tuple, consolidate bool) {
+func (ocl *ocList) consume(ts []tuple, consolidate bool) error {
 	start := 0
 	if ocl.ocs.Len() == 0 {
 		// nothing is added so far, we simply absorb all tuples
@@ -369,9 +406,10 @@ func (ocl *ocList) consume(ts []tuple, consolidate bool) {
 		start = 1
 	}
 	for _, t := range ts[start:] {
+		//fmt.Printf("Going to consume: %s\n", t.strRep())
 		extra, err := ocl.consumeATuple(t)
 		if err != nil {
-			return
+			return err
 		} else {
 			ocl.add(extra)
 		}
@@ -380,6 +418,7 @@ func (ocl *ocList) consume(ts []tuple, consolidate bool) {
 			ocl.consolidate()
 		}
 	}
+	return nil
 }
 
 func (ocl *ocList) removeSubsumed() {
@@ -576,6 +615,28 @@ func findContainedWordPairs(words []string) map[string]string {
 	return result2
 }
 
+func isCyclePresent() (bool, *orderedChars, rune, rune) {
+	mark := ocLists.ocs.Front()
+	for mark != nil {
+		oc := mark.Value.(*orderedChars)
+		duplicate, whichOne := oc.duplicateFound()
+		if duplicate {
+			return true, oc, whichOne, whichOne
+		} else {
+			last := oc.charList.Back().Value.(rune)
+			first := oc.charList.Front().Value.(rune)
+			smallerThanLast := greaterList[last]
+			for _, v := range smallerThanLast {
+				if v == first {
+					return true, oc, last, first
+				}
+			}
+		}
+		mark = mark.Next()
+	}
+	return false, nil, -1, -1
+}
+
 func alienOrder(words []string) string {
 	result := ""
 	alienAlphabet = newAlphabet()
@@ -624,24 +685,40 @@ func alienOrder(words []string) string {
 		fmt.Printf("firstGenTup: %s\n", dumpTupleSlice(firstGenTup))
 		fmt.Printf("remainingTup: %s\n", dumpTupleSlice(remainingTup))
 		// all tuples are expected to be distinct, so need of consolidating is not there
-		ocLists.consume(firstGenTup, false)
+		err := ocLists.consume(firstGenTup, false)
+		if err != nil {
+			fmt.Println(err.Error())
+			return ""
+		}
 		fmt.Printf("After consuming firstGenTup:%s\n", ocLists.strRep())
-		ocLists.consume(remainingTup, true)
+		err = ocLists.consume(remainingTup, true)
+		if err != nil {
+			fmt.Println(err.Error())
+			return ""
+		}
 		fmt.Printf("After consuming remainingTup:%s\n", ocLists.strRep())
 		reduced := ocLists.consolidate()
 		for reduced > 0 {
 			reduced = ocLists.consolidate()
 		}
+		ocLists.sort()
 		fmt.Printf("After consolidation:%s\n", ocLists.strRep())
+
+		present, oc, last, first := isCyclePresent()
+		if present {
+			fmt.Printf("Flound cycle in %s between %s and %s\n", oc.strRep(), string(last), string(first))
+			return ""
+		}
 
 	} else {
 		// We did not get any comparision between any two letters.
-		// This is Ok only if there is only one alphabet. For other cases,
-		// we will have to check further things.
-		if len(alienAlphabet.runeBoolMap) == 1 {
+		// This is Ok only if there is only one alphabet or only word.
+		// For other cases, we will have to check further things.
+		if len(alienAlphabet.runeBoolMap) == 1 || len(words) == 1 {
 			for k, _ := range alienAlphabet.runeBoolMap {
-				return string(k)
+				result = result + string(k)
 			}
+			return result
 		} else {
 			// No relationship for any letter pair and it is not a single
 			// letter corner case. We need to check the next corner case
@@ -663,12 +740,20 @@ func alienOrder(words []string) string {
 	// reset alphabet so as we can track those already covered and left out
 	alienAlphabet.reset()
 	if ocLists != nil && ocLists.ocs != nil && ocLists.ocs.Len() > 0 {
+		resultoc := newOc()
 		mark := ocLists.ocs.Front()
 		for mark != nil {
 			anOc := mark.Value.(*orderedChars)
-			result = alienAlphabet.filter(anOc) + result
+			//fmt.Printf("Going to filter %s\n", anOc.strRep())
+
+			//	result = alienAlphabet.filter(anOc) + result
+
+			alienAlphabet.merge(anOc, resultoc)
+
+			//fmt.Printf("result: %s\n", resultoc.strRep())
 			mark = mark.Next()
 		}
+		result = resultoc.strRep()
 	}
 	// any remaining isolated chars
 	if len(isolatedLetters) > 0 {
@@ -795,6 +880,35 @@ func (set *alphabet) filter(word *orderedChars) string {
 	return result
 }
 
+func (set *alphabet) merge(incoming *orderedChars, soFarBuilt *orderedChars) {
+	placement := make(map[rune]*list.Element)
+	// populate the placement
+	mark := soFarBuilt.charList.Front()
+	for mark != nil {
+		placement[mark.Value.(rune)] = mark
+		mark = mark.Next()
+	}
+	// add dummy node so that Prev() of it will point to the place where new node can be inserted
+	last := soFarBuilt.appendElement(rune(-1))
+	insert := last
+	here := incoming.charList.Back()
+	for here != nil {
+		// let us first check whether 'here' is already placed
+		place := placement[here.Value.(rune)]
+		if place != nil {
+			// already covered, nothing to add; simply update where next insert should be
+			insert = place
+		} else {
+			// it is new character, need to insert (TBD - add insert method on orderedChars)
+			insert = soFarBuilt.charList.InsertBefore(here.Value.(rune), insert)
+			set.runeBoolMap[here.Value.(rune)] = true
+		}
+		here = here.Prev()
+	}
+	// we need to remove the last dummy node
+	soFarBuilt.charList.Remove(last)
+}
+
 func (set *alphabet) strRep() string {
 	result := "{"
 	for k, v := range set.runeBoolMap {
@@ -835,7 +949,22 @@ func (set *alphabet) letterConsumed(r rune) {
 
 func main() {
 
-	input := []string{"bsusz", "rhn", "gfbrwec", "kuw", "qvpxbexnhx", "gnp", "laxutz", "qzxccww"}
+	input := []string{"dvpzu", "bq", "lwp", "akiljwjdu", "vnkauhh", "ogjgdsfk", "tnkmxnj", "uvwa", "zfe", "dvgghw", "yeyruhev", "xymbbvo", "m", "n"}
+	fmt.Println(alienOrder(input)) // expected:		empty
+	fmt.Println()
+	reset()
+
+	input = []string{"ozvcdpgfq", "mridvkklqj", "dpwecbwor", "xxtistijm", "xxuon", "tudbazpggu", "hnuumktbjy", "bogbcoi"}
+	fmt.Println(alienOrder(input)) // expected:		wnlb
+	fmt.Println()
+	reset()
+
+	input = []string{"wnlb"}
+	fmt.Println(alienOrder(input)) // expected:		wnlb
+	fmt.Println()
+	reset()
+
+	input = []string{"bsusz", "rhn", "gfbrwec", "kuw", "qvpxbexnhx", "gnp", "laxutz", "qzxccww"}
 	fmt.Println(alienOrder(input)) // expected:		""	blank
 	fmt.Println()
 	reset()
