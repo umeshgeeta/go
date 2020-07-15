@@ -3,7 +3,7 @@
 
 // Slice exercise from Go Tour: https://tour.golang.org/moretypes/18
 // The pic.Show prints pretty picture on the tour web page. here is simply
-// prints Hex string.
+// prints Hex strRep.
 package main
 
 import (
@@ -22,7 +22,7 @@ func Pic(dx, dy int) [][]uint8 {
 	return result
 }
 
-// count the words in the input string
+// count the words in the input strRep
 func WordCount(s string) map[string]int {
 	result := make(map[string]int)
 	words := strings.Fields(s)
