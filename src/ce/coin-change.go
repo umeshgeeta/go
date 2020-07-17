@@ -20,22 +20,18 @@ func coinChange(coins []int, amount int) int {
 	}
 	fmt.Printf("%v\n", coinCount[0])
 	for amt := 1; amt < amount+1; amt++ {
-		minCoinCount := 0
+		minCoinCount := -1
 		for coin := 0; coin < cc; coin++ {
 			coinValue := coins[coin]
+			coinCount[amt][coin] = -1
 			if amt >= coinValue {
 				lessAmt := amt - coinValue
-				coinCount[amt][coin] = coinCount[lessAmt][cc] + 1
-			} else {
-				coinCount[amt][coin] = 0
-			}
-			if minCoinCount == 0 {
-				minCoinCount = coinCount[amt][coin]
-			} else {
-				if coinCount[amt][coin] > 0 && coinCount[amt][coin] < minCoinCount {
-					minCoinCount = coinCount[amt][coin]
+				if coinCount[lessAmt][cc] > -1 {
+					coinCount[amt][coin] = coinCount[lessAmt][cc] + 1
 				}
-				// else minimum does not change
+			}
+			if coinCount[amt][coin] > 0 && (coinCount[amt][coin] < minCoinCount || minCoinCount < 1) {
+				minCoinCount = coinCount[amt][coin]
 			}
 		}
 		coinCount[amt][cc] = minCoinCount
@@ -45,8 +41,8 @@ func coinChange(coins []int, amount int) int {
 }
 
 func main() {
-	//coins := []int{1,2,5}
-	//fmt.Printf("%d\n", coinChange(coins, 11))
-	coins := []int{2}
+	coins := []int{1, 2, 5}
+	fmt.Printf("%d\n", coinChange(coins, 11))
+	coins = []int{2}
 	fmt.Printf("%d\n", coinChange(coins, 3))
 }
