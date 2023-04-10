@@ -48,11 +48,11 @@ func addBinary(a string, b string) string {
 	if blen == 0 {
 		return a
 	}
-	len := alen
-	if len < blen {
-		len = blen
+	maxLen := alen
+	if maxLen < blen {
+		maxLen = blen
 	}
-	p := len + 1
+	p := maxLen + 1
 	result := make([]byte, p)
 	i := 0
 	carry := uint8(0)
