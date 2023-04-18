@@ -1,7 +1,9 @@
 /*
- * MIT License
- * Copyright (c) 2023. Neosemantix, Inc.
- * Author: Umesh Patil
+ * https://leetcode.com/problems/climbing-stairs/description/
+ *
+ * You are climbing a staircase. It takes n steps to reach the top.
+ * Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+ *
  */
 
 // MIT License
@@ -15,53 +17,26 @@ import (
 )
 
 func main() {
-	n := 45
+	n := 6
+	fmt.Printf("climbStairs: %d for n: %d\n", climbStairs(n), n)
+
+	n = 45
 	fmt.Printf("climbStairs: %d for n: %d\n", climbStairs(n), n)
 }
 
 func climbStairs(n int) int {
 	max2Steps := n / 2
 	twoSteps := 0
-	//numWays := 0
 	numWays := big.NewInt(0)
 	for twoSteps <= max2Steps {
 		oneSteps := n - (twoSteps * 2)
-		//p := comb(twoSteps, oneSteps+twoSteps)
 		p := nCr(int64(oneSteps+twoSteps), int64(twoSteps))
-		fmt.Printf("twoSteps: %d oneSteps: %d comb: %d\n", twoSteps, oneSteps, p)
-		//numWays += p
+		fmt.Printf("twoSteps: %d oneSteps: %d nCr: %d\n", twoSteps, oneSteps, p)
 		numWays.Add(numWays, p)
 		twoSteps++
 	}
 	fmt.Println(numWays)
 	return int(numWays.Int64())
-}
-
-func factorial(n int) int {
-	i := 1
-	result := 1
-	for i <= n {
-		result = result * i
-		i++
-	}
-	return result
-}
-
-func factorialDiv(t int, n int) int {
-	i := 0
-	result := 1
-	for i < t {
-		result = result * (n - i)
-		i++
-	}
-	return result
-}
-
-func comb(t int, n int) int {
-	nm := factorialDiv(t, n)
-	tn := factorial(t)
-	fmt.Printf("nm: %d tn: %d\n", nm, tn)
-	return nm / tn
 }
 
 func nCr(n, r int64) *big.Int {
@@ -73,13 +48,15 @@ func nCr(n, r int64) *big.Int {
 		return big.NewInt(1)
 	}
 
-	result := big.NewInt(1)
+	numerator := big.NewInt(1)
+	denominator := big.NewInt(1)
 	for i := int64(1); i <= minVal; i++ {
-		numerator := big.NewInt(n - i + 1)
-		denominator := big.NewInt(i)
-		factor := new(big.Int).Div(numerator, denominator)
-		result.Mul(result, factor)
+		n := big.NewInt(n - i + 1)
+		numerator.Mul(numerator, n)
+		d := big.NewInt(i)
+		denominator.Mul(denominator, d)
 	}
-
+	result := new(big.Int).Div(numerator, denominator)
+	fmt.Printf("%d %d %d\n", numerator, denominator, result)
 	return result
 }
