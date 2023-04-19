@@ -1,4 +1,12 @@
 /*
+ * https://leetcode.com/problems/symmetric-tree/description/
+ *
+ * Given the root of a binary tree, check whether it is a mirror of itself (i.e., symmetric around its center).
+ *
+ * The approach is to make BFS - fatten out given binary tree and at each level of the tree check the symmetry.
+ * Note how in flattened BFS, nils are populating missing children. Last level is all 'nil' so in itself that
+ * does not break the symmetry if the binary tree is all symmetric before that.
+ *
  * MIT License
  * Copyright (c) 2023. Neosemantix, Inc.
  * Author: Umesh Patil
@@ -94,14 +102,35 @@ func bfs(root *TreeNode) []*TreeNode {
 	bfs_array := make([]*TreeNode, 1)
 	bfs_array[0] = root
 	i := 0
-	for i < len(bfs_array) {
+	howManyInLevel := 1
+	levelStartIndex := 0
+	atLeastOneNonNilChild := true
+	done := false
+	for i < len(bfs_array) && !done {
 		node := bfs_array[i]
 		if node != nil {
-			bfs_array = append(bfs_array, node.Left)
-			bfs_array = append(bfs_array, node.Right)
-
+			ln := node.Left
+			rn := node.Right
+			bfs_array = append(bfs_array, ln)
+			bfs_array = append(bfs_array, rn)
+			if ln != nil || rn != nil {
+				atLeastOneNonNilChild = true
+			}
+		} else {
+			bfs_array = append(bfs_array, nil)
+			bfs_array = append(bfs_array, nil)
 		}
 		i++
+		if howManyInLevel == (i - levelStartIndex) {
+			howManyInLevel = 2 * howManyInLevel
+			levelStartIndex = i
+			if !atLeastOneNonNilChild {
+				done = true
+			} else {
+				// reset for the next iteration
+				atLeastOneNonNilChild = false
+			}
+		}
 	}
 	return bfs_array
 }
