@@ -142,12 +142,13 @@ func (oc *orderedChars) duplicateFound() (bool, rune) {
 }
 
 // Found value, second returned value:
-//					0:	no smaller or bigger char of tuple was found
-//					1:	only smaller of tuple was found
-//					2:	only bigger of tuple was found
-//					3:	both smaller and bigger were found
-//					11:	Smaller appended at the start
-//					12: Bigger appended at the start
+//
+//	0:	no smaller or bigger char of tuple was found
+//	1:	only smaller of tuple was found
+//	2:	only bigger of tuple was found
+//	3:	both smaller and bigger were found
+//	11:	Smaller appended at the start
+//	12: Bigger appended at the start
 func (oc *orderedChars) consume(t tuple) (*orderedChars, int, error) {
 	if t.biggerChar == oc.frontChar() {
 		if !oc.isPresent(t.smallerChar) {

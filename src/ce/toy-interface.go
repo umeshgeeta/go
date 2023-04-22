@@ -19,11 +19,11 @@ type BadToy struct {
 	name string
 }
 
-func (tg *GoodToy) Play(){
+func (tg *GoodToy) Play() {
 	fmt.Printf("%s toy is playing\n", tg.name)
 }
 
-func (tg *GoodToy) Share(){
+func (tg *GoodToy) Share() {
 	fmt.Printf("%s toy is sharing\n", tg.name)
 }
 
@@ -46,10 +46,10 @@ func main() {
 	// play(&bt)
 }
 
-func play(t Toy){
+func play(t Toy) {
 	t.Play()
 }
 
-func share(t Toy){
+func share(t Toy) {
 	t.Share()
 }

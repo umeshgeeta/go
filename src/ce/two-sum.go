@@ -36,7 +36,6 @@ func twoSum(nums []int, target int) []int {
 	return result
 }
 
-//
 // Given a paragraph and a list of banned words, return the most frequent word
 // that is not in the list of banned words.  It is guaranteed there is at least
 // one word that isn't banned, and that the answer is unique.
@@ -62,7 +61,6 @@ func twoSum(nums []int, target int) []int {
 // and that "hit" isn't the answer even though it occurs more because it is banned.
 //
 // https://leetcode.com/explore/interview/card/amazon/76/array-and-strings/2973/
-//
 func mostCommonWord(paragraph string, banned []string) string {
 	wordCount := make(map[string]int)
 	words := strings.Fields(paragraph)

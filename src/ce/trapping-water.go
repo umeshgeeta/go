@@ -8,7 +8,6 @@ import (
 	"math"
 )
 
-//
 // Given n non-negative integers representing an elevation map where the width
 // of each bar is 1, compute how much water it is able to trap after raining.
 //
@@ -21,7 +20,6 @@ import (
 // Basic idea is if you hypothetically assume max height value in the first and
 // last cell, we get the 'union' volume of the water. We should find the
 // intersection since in reality both ends do not have max height walls.
-//
 func trap(height []int) int {
 	len := len(height)
 	leftMax := make([]int, len)
