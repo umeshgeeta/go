@@ -5,6 +5,8 @@
 
 package main
 
+import "math"
+
 /*
  * LeetCode no. 2591: Distribute Money to Maximum Children
  * https://leetcode.com/problems/distribute-money-to-maximum-children/description/
@@ -88,4 +90,32 @@ func distMoney(money int, children int) int {
 		return children - 1
 	}
 	return -1
+}
+
+/*
+ * LeetCode problem no. 319: Bulb switcher
+ * https://leetcode.com/problems/bulb-switcher/description/
+ *
+ * There are n bulbs that are initially off. You first turn on all the bulbs,
+ * then you turn off every second bulb.
+ *
+ * On the third round, you toggle every third bulb (turning on if it's off or turning off
+ * if it's on). For the ith round, you toggle every i bulb. For the nth round,
+ * you only toggle the last bulb.
+ *
+ * Return the number of bulbs that are on after n rounds.
+ */
+func bulbSwitch(n int) int {
+
+	// As all the bulbs are initially off, at the end only bulbs that are toggled an
+	// odd number of times will remain on. Whenever we are at a round i we know we toggle
+	// all bulbs having a factor i. Thus, we need to find the bulbs which have an odd number
+	// of factors, as those bulbs will be toggled an odd number of times (once by each factor).
+	//
+	// A perfect square number has an odd number of factors, since any number's factors come in
+	// pairs of two different numbers, but the square root of the number will be paired with itself.
+	// Thus we just need to find how many numbers from 1 to n are perfect squares. The floor of
+	// the square root of n gives us the largest number whose square is less than or equal to n.
+	// Hence, sqrt(n) is our answer to this problem.
+	return int(math.Floor(math.Sqrt(float64(n))))
 }

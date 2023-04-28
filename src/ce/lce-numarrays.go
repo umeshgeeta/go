@@ -5,7 +5,10 @@
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
 /*
  * LeetCode problem no. 136: Single Number
@@ -92,11 +95,74 @@ func addRange(result [][]int, start int, end int) [][]int {
 }
 
 func main() {
-	nums := []int{-1}
-	result := findMissingRanges(nums, -2, -1)
-	fmt.Println(result)
+	//nums := []int{-1}
+	//result := findMissingRanges(nums, -2, -1)
+	//fmt.Println(result)
 
 	//nums = []int{0, 1, 3, 50, 75}
 	//result = findMissingRanges(nums, 0, 99)
 	//fmt.Println(result)
+
+	//nums := []int{1, 0, -1, 0, -2, 2}
+	//fmt.Println(fourSum(nums, 0))
+
+	nums := []int{2, 2, 2, 2, 2}
+	fmt.Println(fourSum(nums, 8))
+}
+
+/*
+ * LeetCode problem no. 18: 4Sum
+ * https://leetcode.com/problems/4sum/description/
+ *
+ * Given an array nums of n integers, return an array of all the unique quadruplets [nums[a], nums[b], nums[c], nums[d]]
+ * such that:
+ *
+ * - 0 <= a, b, c, d < n
+ * - a, b, c, and d are distinct.
+ * - nums[a] + nums[b] + nums[c] + nums[d] == target
+ *
+ * You may return the answer in any order.
+ *
+ */
+func fourSum(nums []int, target int) [][]int {
+	var result [][]int
+	n := len(nums)
+	if n < 4 {
+		return result
+	}
+	sort.Ints(nums)
+	if nums[0]+nums[1]+nums[2]+nums[3] > target {
+		return result
+	}
+	for i := 0; i < n-3; i++ {
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
+		}
+		for j := i + 1; j < n-2; j++ {
+			if j > i+1 && nums[j] == nums[j-1] {
+				continue
+			}
+			left, right := j+1, n-1
+			for left < right {
+				//fmt.Printf("i: %d j: %d left: %d right: %d\n", i, j, left, right)
+				sum := nums[i] + nums[j] + nums[left] + nums[right]
+				if sum == target {
+					result = append(result, []int{nums[i], nums[j], nums[left], nums[right]})
+					for left < right && nums[left] == nums[left+1] {
+						left++
+					}
+					for left < right && nums[right] == nums[right-1] {
+						right--
+					}
+					left++
+					right--
+				} else if sum < target {
+					left++
+				} else {
+					right--
+				}
+			}
+		}
+	}
+	return result
 }

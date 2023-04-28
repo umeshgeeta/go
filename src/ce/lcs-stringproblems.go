@@ -6,6 +6,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 	"unicode"
 )
@@ -145,4 +146,65 @@ func equalFrequency(word string) bool {
 		}
 	}
 	return false
+}
+
+/*
+ * LeetCode problem no. 3: Longest Substring Without Repeating Characters
+ *
+ * Given a string s, find the length of the longest substring without repeating characters.
+ */
+func lengthOfLongestSubstring(s string) int {
+	size := len(s)
+	if size < 2 {
+		return size
+	}
+	charsScannedSoFar := make(map[rune]int)
+	i := 0
+	lols := 0 // length of the longest substring
+	start := 0
+	sr := []rune(s)
+	for i < size {
+		j, ok := charsScannedSoFar[sr[i]]
+		if !ok {
+			charsScannedSoFar[sr[i]] = i
+			lols = checkLength(charsScannedSoFar, lols)
+		} else {
+			// we came across a repeat char
+			firstpart := j - start + 1
+			if firstpart > lols {
+				lols = firstpart
+			}
+			// new substring will start from next char of the earlier
+			start = j + 1
+			// we need to remove all chars with index upto j
+			for in, ch := range charsScannedSoFar {
+				if ch <= j {
+					delete(charsScannedSoFar, in)
+				}
+			}
+			// now we add the current char
+			charsScannedSoFar[sr[i]] = i
+
+			remainingChars := len(charsScannedSoFar)
+			if lols < remainingChars {
+				lols = remainingChars
+			}
+			lols = checkLength(charsScannedSoFar, lols)
+		}
+		i++
+	}
+	lols = checkLength(charsScannedSoFar, lols)
+	return lols
+}
+
+func checkLength(charsScannedSoFar map[rune]int, lols int) int {
+	remainingChars := len(charsScannedSoFar)
+	if lols < remainingChars {
+		lols = remainingChars
+	}
+	return lols
+}
+
+func main() {
+	fmt.Println(lengthOfLongestSubstring("abcb"))
 }
