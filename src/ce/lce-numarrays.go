@@ -7,6 +7,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"sort"
 )
 
@@ -94,22 +95,6 @@ func addRange(result [][]int, start int, end int) [][]int {
 	return append(result, rng)
 }
 
-func main() {
-	//nums := []int{-1}
-	//result := findMissingRanges(nums, -2, -1)
-	//fmt.Println(result)
-
-	//nums = []int{0, 1, 3, 50, 75}
-	//result = findMissingRanges(nums, 0, 99)
-	//fmt.Println(result)
-
-	//nums := []int{1, 0, -1, 0, -2, 2}
-	//fmt.Println(fourSum(nums, 0))
-
-	nums := []int{2, 2, 2, 2, 2}
-	fmt.Println(fourSum(nums, 8))
-}
-
 /*
  * LeetCode problem no. 18: 4Sum
  * https://leetcode.com/problems/4sum/description/
@@ -165,4 +150,112 @@ func fourSum(nums []int, target int) [][]int {
 		}
 	}
 	return result
+}
+
+/**
+ * LeetCode problem no. 31: Next Permutation
+ * https://leetcode.com/problems/next-permutation/description/
+ *
+ * A permutation of an array of integers is an arrangement of its members into a sequence or linear order.
+ * For example, for arr = [1,2,3], the following are all the permutations of arr:
+ * [1,2,3], [1,3,2], [2, 1, 3], [2, 3, 1], [3,1,2], [3,2,1].
+ * The next permutation of an array of integers is the next lexicographically greater permutation of its integer.
+ * More formally, if all the permutations of the array are sorted in one container according to their lexicographical
+ * order, then the next permutation of that array is the permutation that follows it in the sorted container.
+ * If such arrangement is not possible, the array must be rearranged as the lowest possible order
+ * (i.e., sorted in ascending order).
+ *
+ * For example, the next permutation of arr = [1,2,3] is [1,3,2].
+ * Similarly, the next permutation of arr = [2,3,1] is [3,1,2].
+ * While the next permutation of arr = [3,2,1] is [1,2,3] because [3,2,1] does not have a lexicographical larger
+ * rearrangement.
+ *
+ * Given an array of integers nums, find the next permutation of nums.
+ *
+ * The replacement must be in place and use only constant extra memory.
+ *
+ * Constraints:
+ * 					1 <= nums.length <= 100
+ * 					0 <= nums[i] <= 100
+ */
+func nextPermutation(nums []int) {
+	n := len(nums)
+	i := n - 2
+	found := false
+	for i > -1 && !found {
+		if nums[i] < nums[i+1] {
+			found = true
+		} else {
+			i--
+		}
+	}
+	if i == -1 && !found {
+		// no more permutation is possible
+		reverseList(nums, 0, n-1)
+		return
+	}
+	msIndex := findImmediateNext(nums, i)
+	nums[i], nums[msIndex] = nums[msIndex], nums[i]
+	sort.Ints(nums[i+1:])
+}
+
+// both start and end are indices
+func reverseList(nums []int, start, end int) {
+	midPoint := (end - start + 1) / 2
+	for i := start; i < start+midPoint; i++ {
+		nums[i], nums[end-i+start] = nums[end-i+start], nums[i]
+	}
+}
+
+func findImmediateNext(nums []int, where int) int {
+	n := len(nums)
+	which := nums[where]
+	result := math.MaxInt
+	index := where
+	for i := where + 1; i < n; i++ {
+		if nums[i] > which && nums[i] < result {
+			result, index = nums[i], i
+		}
+	}
+	return index
+}
+
+func main() {
+	//nums := []int{-1}
+	//result := findMissingRanges(nums, -2, -1)
+	//fmt.Println(result)
+
+	//nums = []int{0, 1, 3, 50, 75}
+	//result = findMissingRanges(nums, 0, 99)
+	//fmt.Println(result)
+
+	//nums := []int{1, 0, -1, 0, -2, 2}
+	//fmt.Println(fourSum(nums, 0))
+
+	//nums := []int{2, 2, 2, 2, 2}
+	//fmt.Println(fourSum(nums, 8))
+
+	nums := []int{1, 2, 3}
+	nextPermutation(nums)
+	fmt.Println(nums)
+
+	nums = []int{3, 2, 1}
+	nextPermutation(nums)
+	fmt.Println(nums)
+
+	nums = []int{1, 1, 5}
+	nextPermutation(nums)
+	fmt.Println(nums)
+
+	nums = []int{6, 9, 8, 5}
+	nextPermutation(nums)
+	fmt.Println(nums)
+
+	nums = []int{4, 9, 8, 5}
+	nextPermutation(nums)
+	fmt.Println(nums)
+
+	nums = []int{2, 3, 1, 3, 3}
+	nextPermutation(nums)
+	fmt.Println(nums)
 }
