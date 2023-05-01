@@ -114,23 +114,91 @@ func checkXvals(xvals []int) (bool, int) {
 	return true, doubleMid
 }
 
+// LeetCode problen no. 223: Rectangle Area
+// https://leetcode.com/problems/rectangle-area/description/
+//
+// Given the coordinates of two rectilinear rectangles in a 2D plane,
+// return the total area covered by the two rectangles.
+//
+// The first rectangle is defined by its bottom-left corner (ax1, ay1)
+// and its top-right corner (ax2, ay2).
+//
+// The second rectangle is defined by its bottom-left corner (bx1, by1)
+// and its top-right corner (bx2, by2).
+//
+// Constraints:
+//
+// -104 <= ax1 <= ax2 <= 104
+// -104 <= ay1 <= ay2 <= 104
+// -104 <= bx1 <= bx2 <= 104
+// -104 <= by1 <= by2 <= 104
+func computeArea(ax1 int, ay1 int, ax2 int, ay2 int, bx1 int, by1 int, bx2 int, by2 int) int {
+	// It is given that ax1 < ax2 and bx1 < bx2.
+	var cx1, cx2, cy1, cy2 int
+	var overlapX, overlapY bool
+	if bx1 < ax1 && ax1 < bx2 && bx2 <= ax2 {
+		overlapX = true
+		cx1, cx2 = ax1, bx2
+	} else if bx1 >= ax1 && bx2 <= ax2 {
+		overlapX = true
+		cx1, cx2 = bx1, bx2
+	} else if ax1 <= bx1 && bx1 < ax2 && ax2 <= bx2 {
+		overlapX = true
+		cx1, cx2 = bx1, ax2
+	} else if bx1 < ax1 && ax2 < bx2 {
+		overlapX = true
+		cx1, cx2 = ax1, ax2
+	}
+	// else no overlap; too much undershoot or overshoot
+	if by1 < ay1 && ay1 < by2 && by2 <= ay2 {
+		overlapY = true
+		cy1, cy2 = ay1, by2
+	} else if ay1 <= by1 && by2 <= ay2 {
+		overlapY = true
+		cy1, cy2 = by1, by2
+	} else if ay1 <= by1 && by1 < ay2 && ay2 <= by2 {
+		overlapY = true
+		cy1, cy2 = by1, ay2
+	} else if by1 < ay1 && ay2 < by2 {
+		overlapY = true
+		cy1, cy2 = ay1, ay2
+	}
+	overlapArea := 0
+	if overlapX && overlapY {
+		overlapArea = (cx2 - cx1) * (cy2 - cy1)
+	}
+	aArea := (ax2 - ax1) * (ay2 - ay1)
+	bArea := (bx2 - bx1) * (by2 - by1)
+	return aArea + bArea - overlapArea
+}
+
 func main() {
 
-	points := [][]int{{1, 1}, {0, 1}, {-1, 1}, {0, 0}}
-	fmt.Println(isReflected(points))
+	fmt.Println(computeArea(-5, 0, 0, 3, -3, -3, 3, 3))
 
-	points = [][]int{{10, 10}, {11, 11}, {9, 11}}
-	fmt.Println(isReflected(points))
+	fmt.Println(computeArea(-2, -2, 2, 2, 3, 3, 4, 4))
 
-	points = [][]int{{0, 0}, {0, 0}}
-	fmt.Println(isReflected(points))
+	fmt.Println(computeArea(-5, -3, 0, 0, -3, -3, 3, 3))
 
-	points = [][]int{{1, 1}, {-1, 1}}
-	fmt.Println(isReflected(points))
+	fmt.Println(computeArea(-3, 0, 3, 4, 0, -1, 9, 2))
 
-	points = [][]int{{1, 1}, {-1, -1}}
-	fmt.Println(isReflected(points))
+	fmt.Println(computeArea(-2, -2, 2, 2, -2, -2, 2, 2))
 
-	points = [][]int{{-16, 1}, {16, 1}, {16, 1}}
-	fmt.Println(isReflected(points))
+	//points := [][]int{{1, 1}, {0, 1}, {-1, 1}, {0, 0}}
+	//fmt.Println(isReflected(points))
+	//
+	//points = [][]int{{10, 10}, {11, 11}, {9, 11}}
+	//fmt.Println(isReflected(points))
+	//
+	//points = [][]int{{0, 0}, {0, 0}}
+	//fmt.Println(isReflected(points))
+	//
+	//points = [][]int{{1, 1}, {-1, 1}}
+	//fmt.Println(isReflected(points))
+	//
+	//points = [][]int{{1, 1}, {-1, -1}}
+	//fmt.Println(isReflected(points))
+	//
+	//points = [][]int{{-16, 1}, {16, 1}, {16, 1}}
+	//fmt.Println(isReflected(points))
 }
