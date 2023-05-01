@@ -7,7 +7,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/umeshgeeta/goshared/util"
 	"math"
+
 	"sort"
 )
 
@@ -220,7 +222,97 @@ func findImmediateNext(nums []int, where int) int {
 	return index
 }
 
+type pair struct {
+	startIndex int
+	// map of fruit id and accumulated fruits so far
+	fruits map[int]int
+}
+
+func newPair(start int) *pair {
+	p := pair{
+		startIndex: start,
+		fruits:     make(map[int]int),
+	}
+	return &p
+}
+
+// LeetCode problem no. 904: Fruit Into Baskets
+// https://leetcode.com/problems/fruit-into-baskets/description/
+// You are visiting a farm that has a single row of fruit trees arranged from left to right.
+// The trees are represented by an integer array fruits where fruits[i] is the type of fruit
+// the ith tree produces.
+//
+// You want to collect as much fruit as possible. However, the owner has some strict rules
+// that you must follow:
+//
+// You only have two baskets, and each basket can only hold a single type of fruit. There is no
+// limit on the amount of fruit each basket can hold.
+// Starting from any tree of your choice, you must pick exactly one fruit from every tree
+// (including the start tree) while moving to the right. The picked fruits must fit in one of
+// your baskets.
+// Once you reach a tree with fruit that cannot fit in your baskets, you must stop.
+// Given the integer array fruits, return the maximum number of fruits you can pick.
+func totalFruit(fruits []int) int {
+	pairs := make([]pair, 0)
+	if len(fruits) > 0 {
+		crtPair := newPair(0)
+		crtPair.fruits[fruits[0]] = 1
+		for i := 1; i < len(fruits); i++ {
+			fruit := fruits[i]
+			ct, present := crtPair.fruits[fruit]
+			if present {
+				crtPair.fruits[fruit] = ct + 1
+			} else {
+				if len(crtPair.fruits) == 1 {
+					crtPair.fruits[fruit] = 1
+				} else {
+					// we have encountered a new fruit, start the new pair
+					j := i - 1
+					previousFruit := fruits[j]
+					previousFruitCount := 0
+					for j > -1 && fruits[j] == previousFruit {
+						previousFruitCount++
+						j--
+					}
+					// add the current pair
+					pairs = append(pairs, *crtPair)
+					// create a new pair
+					crtPair = newPair(i)
+					crtPair.fruits[previousFruit] = previousFruitCount
+					crtPair.fruits[fruit] = 1
+				}
+			}
+		}
+		pairs = append(pairs, *crtPair)
+	}
+	return findMaxCount(pairs)
+}
+
+func findMaxCount(pairs []pair) int {
+	maxCount := 0
+	for _, p := range pairs {
+		count := 0
+		for _, c := range p.fruits {
+			count += c
+		}
+		if maxCount < count {
+			maxCount = count
+		}
+	}
+	return maxCount
+}
+
 func main() {
+
+	//fruits := []int{1, 2, 1}
+	//fmt.Println(totalFruit(fruits))
+	//
+	//fruits = []int{0, 1, 2, 2}
+	//fmt.Println(totalFruit(fruits))
+	//
+	//fruits = []int{1, 2, 3, 2, 2}
+	//fmt.Println(totalFruit(fruits))
+
 	//nums := []int{-1}
 	//result := findMissingRanges(nums, -2, -1)
 	//fmt.Println(result)
@@ -235,27 +327,94 @@ func main() {
 	//nums := []int{2, 2, 2, 2, 2}
 	//fmt.Println(fourSum(nums, 8))
 
-	nums := []int{1, 2, 3}
-	nextPermutation(nums)
-	fmt.Println(nums)
+	//nums := []int{1, 2, 3}
+	//nextPermutation(nums)
+	//fmt.Println(nums)
+	//
+	//nums = []int{3, 2, 1}
+	//nextPermutation(nums)
+	//fmt.Println(nums)
+	//
+	//nums = []int{1, 1, 5}
+	//nextPermutation(nums)
+	//fmt.Println(nums)
+	//
+	//nums = []int{6, 9, 8, 5}
+	//nextPermutation(nums)
+	//fmt.Println(nums)
+	//
+	//nums = []int{4, 9, 8, 5}
+	//nextPermutation(nums)
+	//fmt.Println(nums)
+	//
+	//nums = []int{2, 3, 1, 3, 3}
+	//nextPermutation(nums)
+	//fmt.Println(nums)
 
-	nums = []int{3, 2, 1}
-	nextPermutation(nums)
-	fmt.Println(nums)
+	arr := []int{3, 1, 2, 4}
+	fmt.Println(sumSubarrayMins(arr))
 
-	nums = []int{1, 1, 5}
-	nextPermutation(nums)
-	fmt.Println(nums)
+	arr = []int{11, 81, 94, 43, 3}
+	fmt.Println(sumSubarrayMins(arr))
+}
 
-	nums = []int{6, 9, 8, 5}
-	nextPermutation(nums)
-	fmt.Println(nums)
+// LeetCode problem no. 907:  Sum of Subarray Minimums
+// https://leetcode.com/problems/sum-of-subarray-minimums/description/
+//
+// Given an array of integers arr, find the sum of min(b), where b ranges over every (contiguous)
+// subarray of arr. Since the answer may be large, return the answer modulo 109 + 7.
+// Constraints:
+//
+// 1 <= arr.length <= 3 * 104
+// 1 <= arr[i] <= 3 * 104
+func sumSubarrayMins(arr []int) int {
+	modBase := 1000000007
+	sum := 0
+	sz := len(arr)
+	stack := util.Stack[int]{}
+	for i := 0; i <= sz; i++ {
+		for evaluateCondition(stack, i, arr) {
+			mid, _ := stack.Pop()
+			leftBoundry := -1
+			if !stack.Empty() {
+				leftBoundry, _ = stack.Peek()
+			}
+			rightBoundry := i
 
-	nums = []int{4, 9, 8, 5}
-	nextPermutation(nums)
-	fmt.Println(nums)
+			count := (mid - leftBoundry) * (rightBoundry - mid) % modBase
+			sum += (count * arr[mid]) % modBase
+			sum = sum % modBase
+		}
+		stack.Push(i)
+	}
+	return sum
+}
 
-	nums = []int{2, 3, 1, 3, 3}
-	nextPermutation(nums)
-	fmt.Println(nums)
+func evaluateCondition(stack util.Stack[int], i int, arr []int) bool {
+	result := false
+	if !stack.Empty() {
+		peek, _ := stack.Peek()
+		if i == len(arr) || arr[peek] >= arr[i] {
+			result = true
+		}
+	}
+	return result
+}
+
+// Another implementation - basic of N x N complexity of Sum of Subarray Minimum (#907).
+func sumSubarrayMinsBasic(arr []int) int {
+	modBase := 1000000007
+	sum := 0
+	sz := len(arr)
+	for start := 0; start < sz; start++ {
+		min := arr[start]
+		for j := start; j < sz; j++ {
+			if arr[j] < min {
+				min = arr[j]
+			}
+			sum = sum + min
+			sum = sum % modBase
+		}
+	}
+	return sum
 }
