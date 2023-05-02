@@ -205,6 +205,89 @@ func checkLength(charsScannedSoFar map[rune]int, lols int) int {
 	return lols
 }
 
+// LeetCode no. 926: Flip String to Monotone Increasing
+// https://leetcode.com/problems/flip-string-to-monotone-increasing/description/
+// A binary string is monotone increasing if it consists of some number of 0's (possibly none),
+// followed by some number of 1's (also possibly none).
+//
+// You are given a binary string s. You can flip s[i] changing it from 0 to 1 or from 1 to 0.
+//
+// Return the minimum number of flips to make s monotone increasing.
+// Constraints:
+//
+// 1 <= s.length <= 105
+// s[i] is either '0' or '1'.
+func minFlipsMonoIncr(s string) int {
+	zero2one := howManyZeros(s)
+	one2zero := 0
+	minCount := zero2one + one2zero // which is same as zero2one
+	for i := 0; i < len(s); i++ {
+		if s[i] == '0' {
+			zero2one--
+		} else {
+			one2zero++
+		}
+		if minCount > zero2one+one2zero {
+			minCount = zero2one + one2zero
+		}
+	}
+	return minCount
+}
+
+func howManyZeros(s string) int {
+	zc := 0
+	for _, c := range s {
+		if c == '0' {
+			zc++
+		}
+	}
+	return zc
+}
+
+// LeetCode problem no. 22: Generate Parentheses (not clear why LeetCode gives an issue for this impl.)
+// Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+// Constraints: 1 <= n <= 8
+func generateParenthesisVer1(n int) []string {
+	result := make([]string, 0)
+	if n == 1 {
+		result = append(result, "()")
+		return result
+	}
+	previous := generateParenthesisVer1(n - 1)
+	for _, p := range previous {
+		result = append(result, "("+p+")")
+		left := "()" + p
+		right := p + "()"
+		result = append(result, left)
+		if !strings.EqualFold(left, right) {
+			result = append(result, right)
+		}
+	}
+	return result
+}
+
+// LeetCode problem no. 22: Generate Parentheses (submitted to LeedCode)
+// Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+// Constraints: 1 <= n <= 8
+func generateParenthesis(n int) []string {
+	result := []string{}
+	if n == 0 {
+		result = append(result, "")
+		return result
+	}
+	for lc := 0; lc < n; lc++ {
+		for _, sl := range generateParenthesis(lc) {
+			for _, sr := range generateParenthesis(n - 1 - lc) {
+				result = append(result, "("+sl+")"+sr)
+			}
+		}
+	}
+	return result
+}
+
 func main() {
-	fmt.Println(lengthOfLongestSubstring("abcb"))
+	//fmt.Println(lengthOfLongestSubstring("abcb"))
+	fmt.Println(minFlipsMonoIncr("00110"))
+	fmt.Println(minFlipsMonoIncr("010110"))
+	fmt.Println(minFlipsMonoIncr("00011000"))
 }
