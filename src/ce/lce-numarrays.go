@@ -302,62 +302,6 @@ func findMaxCount(pairs []pair) int {
 	return maxCount
 }
 
-func main() {
-
-	//fruits := []int{1, 2, 1}
-	//fmt.Println(totalFruit(fruits))
-	//
-	//fruits = []int{0, 1, 2, 2}
-	//fmt.Println(totalFruit(fruits))
-	//
-	//fruits = []int{1, 2, 3, 2, 2}
-	//fmt.Println(totalFruit(fruits))
-
-	//nums := []int{-1}
-	//result := findMissingRanges(nums, -2, -1)
-	//fmt.Println(result)
-
-	//nums = []int{0, 1, 3, 50, 75}
-	//result = findMissingRanges(nums, 0, 99)
-	//fmt.Println(result)
-
-	//nums := []int{1, 0, -1, 0, -2, 2}
-	//fmt.Println(fourSum(nums, 0))
-
-	//nums := []int{2, 2, 2, 2, 2}
-	//fmt.Println(fourSum(nums, 8))
-
-	//nums := []int{1, 2, 3}
-	//nextPermutation(nums)
-	//fmt.Println(nums)
-	//
-	//nums = []int{3, 2, 1}
-	//nextPermutation(nums)
-	//fmt.Println(nums)
-	//
-	//nums = []int{1, 1, 5}
-	//nextPermutation(nums)
-	//fmt.Println(nums)
-	//
-	//nums = []int{6, 9, 8, 5}
-	//nextPermutation(nums)
-	//fmt.Println(nums)
-	//
-	//nums = []int{4, 9, 8, 5}
-	//nextPermutation(nums)
-	//fmt.Println(nums)
-	//
-	//nums = []int{2, 3, 1, 3, 3}
-	//nextPermutation(nums)
-	//fmt.Println(nums)
-
-	arr := []int{3, 1, 2, 4}
-	fmt.Println(sumSubarrayMins(arr))
-
-	arr = []int{11, 81, 94, 43, 3}
-	fmt.Println(sumSubarrayMins(arr))
-}
-
 // LeetCode problem no. 907:  Sum of Subarray Minimums
 // https://leetcode.com/problems/sum-of-subarray-minimums/description/
 //
@@ -417,4 +361,127 @@ func sumSubarrayMinsBasic(arr []int) int {
 		}
 	}
 	return sum
+}
+
+// LeetCode no. 1207: Unique Number of Occurrences
+// Given an array of integers arr, return true if the number of occurrences
+// of each value in the array is unique or false otherwise.
+//
+// Constraints:
+//
+// 1 <= arr.length <= 1000
+// -1000 <= arr[i] <= 1000
+func uniqueOccurrences(arr []int) bool {
+	occCount := make(map[int]int)
+	for _, val := range arr {
+		c, ok := occCount[val]
+		if !ok {
+			occCount[val] = 1
+		} else {
+			occCount[val] = c + 1
+		}
+	}
+	distincNumCount := len(occCount) // all repeat numbers are collapsed
+	distinctOcc := make(map[int]int)
+	for val, occ := range occCount {
+		distinctOcc[occ] = val
+	}
+	return len(distinctOcc) == distincNumCount
+}
+
+// LeetCode problem no. 1010: Pairs of Songs With Total Durations Divisible by 60
+// https://leetcode.com/problems/pairs-of-songs-with-total-durations-divisible-by-60/description/
+// You are given a list of songs where the ith song has a duration of time[i] seconds.
+//
+// Return the number of pairs of songs for which their total duration in seconds is divisible by 60.
+// Formally, we want the number of indices i, j such that i < j with (time[i] + time[j]) % 60 == 0.
+// Constraints:
+//
+// 1 <= time.length <= 6 * 104
+// 1 <= time[i] <= 500
+func numPairsDivisibleBy60(time []int) int {
+	modMap := make(map[int][]int)
+	for _, v := range time {
+		m := v % 60
+		c, _ := modMap[m]
+		c = append(c, v)
+		modMap[m] = c
+	}
+	count := 0
+	for m, p := range modMap {
+		r := 60 - m
+		pr, ok := modMap[r]
+		if ok {
+			if m != r {
+				count += len(p) * len(pr)
+			} else {
+				count += len(p) * (len(pr) - 1)
+			}
+		}
+	}
+	p0, ok := modMap[0]
+	if ok {
+		count += len(p0) * (len(p0) - 1)
+	}
+	return count / 2
+}
+
+func main() {
+
+	fmt.Println(numPairsDivisibleBy60([]int{174, 188, 377, 437, 54, 498, 455, 239, 183, 347, 59, 199, 52, 488, 147, 82}))
+	fmt.Println(numPairsDivisibleBy60([]int{30, 20, 150, 100, 40}))
+	fmt.Println(numPairsDivisibleBy60([]int{60, 60, 60}))
+
+	//fruits := []int{1, 2, 1}
+	//fmt.Println(totalFruit(fruits))
+	//
+	//fruits = []int{0, 1, 2, 2}
+	//fmt.Println(totalFruit(fruits))
+	//
+	//fruits = []int{1, 2, 3, 2, 2}
+	//fmt.Println(totalFruit(fruits))
+
+	//nums := []int{-1}
+	//result := findMissingRanges(nums, -2, -1)
+	//fmt.Println(result)
+
+	//nums = []int{0, 1, 3, 50, 75}
+	//result = findMissingRanges(nums, 0, 99)
+	//fmt.Println(result)
+
+	//nums := []int{1, 0, -1, 0, -2, 2}
+	//fmt.Println(fourSum(nums, 0))
+
+	//nums := []int{2, 2, 2, 2, 2}
+	//fmt.Println(fourSum(nums, 8))
+
+	//nums := []int{1, 2, 3}
+	//nextPermutation(nums)
+	//fmt.Println(nums)
+	//
+	//nums = []int{3, 2, 1}
+	//nextPermutation(nums)
+	//fmt.Println(nums)
+	//
+	//nums = []int{1, 1, 5}
+	//nextPermutation(nums)
+	//fmt.Println(nums)
+	//
+	//nums = []int{6, 9, 8, 5}
+	//nextPermutation(nums)
+	//fmt.Println(nums)
+	//
+	//nums = []int{4, 9, 8, 5}
+	//nextPermutation(nums)
+	//fmt.Println(nums)
+	//
+	//nums = []int{2, 3, 1, 3, 3}
+	//nextPermutation(nums)
+	//fmt.Println(nums)
+
+	//arr := []int{3, 1, 2, 4}
+	//fmt.Println(sumSubarrayMins(arr))
+	//
+	//arr = []int{11, 81, 94, 43, 3}
+	//fmt.Println(sumSubarrayMins(arr))
 }
