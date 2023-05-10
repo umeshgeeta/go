@@ -285,9 +285,136 @@ func generateParenthesis(n int) []string {
 	return result
 }
 
+// LeetCode problem no. 6: Zigzag Conversion
+// https://leetcode.com/problems/zigzag-conversion/description/
+//
+// The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this:
+// (you may want to display this pattern in a fixed font for better legibility)
+//
+// P   A   H   N
+// A P L S I I G
+// Y   I   R
+// And then read line by line: "PAHNAPLSIIGYIR"
+//
+// Write the code that will take a string and make this conversion given a number of rows:
+//
+// string convert(string s, int numRows);
+func convert(s string, numRows int) string {
+	charMap := make(map[int][]rune)
+	i, j := 0, 0
+	downDir := true
+	for _, r := range s {
+		//fmt.Printf("%d %d %t %c\n", i, j, downDir, r)
+		row := charMap[i]
+		row = append(row, r)
+		charMap[i] = row
+		i, j, downDir = nextIndicesWithDir(i, j, numRows, downDir)
+	}
+	i = 0
+	sb := strings.Builder{}
+	for i < numRows {
+		sb.WriteString(string(charMap[i]))
+		i++
+	}
+	return sb.String()
+}
+
+func nextIndicesWithDir(i, j, maxRow int, downDir bool) (int, int, bool) {
+	if maxRow == 1 {
+		return i, j + 1, true
+	}
+	if downDir {
+		if i == maxRow-1 {
+			return i - 1, j + 1, false
+		}
+		return i + 1, j, true
+	}
+	if i == 0 {
+		return i + 1, j, true
+	}
+	return i - 1, j + 1, false
+}
+
+// LeetCode problem no. 97:  Interleaving String
+// https://leetcode.com/problems/interleaving-string/
+//
+// Given strings s1, s2, and s3, find whether s3 is formed by an interleaving of s1 and s2.
+//
+// An interleaving of two strings s and t is a configuration where s and t are divided into n
+// and m substrings respectively, such that:
+//
+// s = s1 + s2 + ... + sn
+// t = t1 + t2 + ... + tm
+// |n - m| <= 1
+// The interleaving is s1 + t1 + s2 + t2 + s3 + t3 + ... or t1 + s1 + t2 + s2 + t3 + s3 + ...
+// Note: a + b is the concatenation of strings a and b.
+//
+// Constraints:
+//
+// 0 <= s1.length, s2.length <= 100
+// 0 <= s3.length <= 200
+// s1, s2, and s3 consist of lowercase English letters.
+func isInterleave(s1 string, s2 string, s3 string) bool {
+	sr1 := []rune(s1)
+	sr2 := []rune(s2)
+	sr3 := []rune(s3)
+	l1 := len(sr1)
+	l2 := len(sr2)
+	l3 := len(sr3)
+	if l1+l2 != l3 {
+		return false
+	}
+	if l3 == 0 { //trivially
+		return true
+	}
+	if l1 == 0 {
+		return s2 == s3
+	}
+	if l2 == 0 {
+		return s1 == s3
+	}
+	dp := make([][]bool, l1+1)
+	for i := 0; i < l1+1; i++ {
+		dp[i] = make([]bool, l2+1)
+	}
+	for i := 0; i < l1+1; i++ {
+		for j := 0; j < l2+1; j++ {
+			if i == 0 && j == 0 {
+				dp[i][j] = true
+			} else if i == 0 {
+				dp[i][j] = dp[i][j-1] && sr2[j-1] == sr3[i+j-1]
+			} else if j == 0 {
+				dp[i][j] = dp[i-1][j] && sr1[i-1] == sr3[i-1+j]
+			} else {
+				dp[i][j] = (dp[i-1][j] && sr1[i-1] == sr3[i-1+j]) || (dp[i][j-1] && sr2[j-1] == sr3[i+j-1])
+			}
+		}
+	}
+	return dp[l1][l2]
+}
+
 func main() {
+
+	fmt.Println(isInterleave("abababababababababababababababababababababababababababababababababababababababababababababababababbb",
+		"babababababababababababababababababababababababababababababababababababababababababababababababaaaba",
+		"abababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababbb"))
+
+	fmt.Println(isInterleave("aabaac", "aaf", "aabaafaac"))
+	fmt.Println(isInterleave("aabaac", "aadaaeaaf", "aadaaeaabaafaac"))
+
+	fmt.Println(isInterleave("aabd", "abdc", "aabdbadc"))
+	fmt.Println(isInterleave("aa", "ab", "abaa"))
+	fmt.Println(isInterleave("a", "", "c"))
+	fmt.Println(isInterleave("aabcc", "dbbca", "aadbbcbcac"))
+	fmt.Println(isInterleave("aabcc", "dbbca", "aadbbbaccc"))
+	fmt.Println(isInterleave("", "", ""))
+
 	//fmt.Println(lengthOfLongestSubstring("abcb"))
-	fmt.Println(minFlipsMonoIncr("00110"))
-	fmt.Println(minFlipsMonoIncr("010110"))
-	fmt.Println(minFlipsMonoIncr("00011000"))
+	//fmt.Println(minFlipsMonoIncr("00110"))
+	//fmt.Println(minFlipsMonoIncr("010110"))
+	//fmt.Println(minFlipsMonoIncr("00011000"))
+	//fmt.Println(convert("AB", 1))
+	//fmt.Println(convert("PAYPALISHIRING", 3))
+	//fmt.Println(convert("PAYPALISHIRING", 4))
+	//fmt.Println(convert("A", 1))
 }

@@ -426,11 +426,113 @@ func numPairsDivisibleBy60(time []int) int {
 	return count / 2
 }
 
+// LeetCode problem no. 152: Maximum Product Subarray
+// https://leetcode.com/problems/maximum-product-subarray/description/
+// Given an integer array nums, find a subarray
+// that has the largest product, and return the product.
+//
+// The test cases are generated so that the answer will fit in a 32-bit integer.
+// Constraints:
+//
+// 1 <= nums.length <= 2 * 104
+// -10 <= nums[i] <= 10
+// The product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer.
+func maxProduct(nums []int) int {
+	result := nums[0]
+	minSoFar := result
+	maxSoFar := result
+	for i := 1; i < len(nums); i++ {
+		minSoFar, maxSoFar = filter(nums[i], minSoFar, maxSoFar)
+		if maxSoFar > result {
+			result = maxSoFar
+		}
+	}
+	return result
+}
+
+func filter(crt, minSoFar, maxSoFar int) (int, int) {
+	mn := minSoFar * crt
+	mx := maxSoFar * crt
+	n, x := crt, crt
+	if mn < n {
+		n = mn
+	}
+	if mx < n {
+		n = mx
+	}
+	if mx > x {
+		x = mx
+	}
+	if mn > x {
+		x = mn
+	}
+	return n, x
+}
+
+// LeetCode problem no. 120: Triangle
+// https://leetcode.com/problems/triangle/description/
+//
+// Given a triangle array, return the minimum path sum from top to bottom.
+//
+// For each step, you may move to an adjacent number of the row below.
+// More formally, if you are on index i on the current row, you may move to
+// either index i or index i + 1 on the next row.
+//
+// Constraints:
+//
+// 1 <= triangle.length <= 200
+// triangle[0].length == 1
+// triangle[i].length == triangle[i - 1].length + 1
+// -104 <= triangle[i][j] <= 104
+func minimumTotal(triangle [][]int) int {
+	runningSum := make([]int, 1)
+	runningSum[0] = triangle[0][0]
+	triangleHeight := len(triangle)
+	for i := 1; i < triangleHeight; i++ {
+		row := triangle[i]
+		numInRow := len(row)
+		numInRunningSum := len(runningSum)
+		newRunningSum := make([]int, 0)
+		for j := 0; j < numInRow; j++ {
+			val := triangle[i][j]
+			if j == 0 {
+				newRunningSum = append(newRunningSum, runningSum[0]+val)
+			} else {
+				m1 := runningSum[j-1] + val
+				if j < numInRunningSum {
+					m2 := runningSum[j] + val
+					if m1 < m2 {
+						newRunningSum = append(newRunningSum, m1)
+					} else {
+						newRunningSum = append(newRunningSum, m2)
+					}
+				} else {
+					// we to append
+					newRunningSum = append(newRunningSum, m1)
+				}
+			}
+		}
+		runningSum = newRunningSum
+	}
+	result := runningSum[0]
+	for k := 1; k < len(runningSum); k++ {
+		if runningSum[k] < result {
+			result = runningSum[k]
+		}
+	}
+	return result
+}
+
 func main() {
 
-	fmt.Println(numPairsDivisibleBy60([]int{174, 188, 377, 437, 54, 498, 455, 239, 183, 347, 59, 199, 52, 488, 147, 82}))
-	fmt.Println(numPairsDivisibleBy60([]int{30, 20, 150, 100, 40}))
-	fmt.Println(numPairsDivisibleBy60([]int{60, 60, 60}))
+	triangle := [][]int{{2}, {3, 4}, {6, 5, 7}, {4, 1, 8, 3}}
+	fmt.Println(minimumTotal(triangle))
+
+	//fmt.Println(maxProduct([]int{2, 3, -2, 4}))
+
+	//fmt.Println(numPairsDivisibleBy60([]int{174, 188, 377, 437, 54, 498, 455, 239, 183, 347, 59, 199, 52, 488, 147, 82}))
+	//fmt.Println(numPairsDivisibleBy60([]int{30, 20, 150, 100, 40}))
+	//fmt.Println(numPairsDivisibleBy60([]int{60, 60, 60}))
 
 	//fruits := []int{1, 2, 1}
 	//fmt.Println(totalFruit(fruits))
