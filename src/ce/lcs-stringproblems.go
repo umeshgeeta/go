@@ -393,21 +393,75 @@ func isInterleave(s1 string, s2 string, s3 string) bool {
 	return dp[l1][l2]
 }
 
+// LeetCode problem no. 392: Is Subsequence
+// https://leetcode.com/problems/is-subsequence/description/
+//
+// Given two strings s and t, return true if s is a subsequence of t, or false otherwise.
+//
+// A subsequence of a string is a new string that is formed from the original string by
+// deleting some (can be none) of the characters without disturbing the relative positions
+// of the remaining characters. (i.e., "ace" is a subsequence of "abcde" while "aec" is not).
+//
+// Constraints:
+//
+// 0 <= s.length <= 100
+// 0 <= t.length <= 104
+// s and t consist only of lowercase English letters.
+func isSubsequence(s string, t string) bool {
+	rs := []rune(s)
+	rt := []rune(t)
+	ls := len(rs)
+	lt := len(rt)
+	if ls > lt {
+		return false
+	}
+	i, j := 0, 0
+	for i < ls && j < lt {
+		if rs[i] == rt[j] {
+			i++
+		}
+		j++
+	}
+	if i < ls {
+		return false
+	}
+	return true
+}
+
 func main() {
 
-	fmt.Println(isInterleave("abababababababababababababababababababababababababababababababababababababababababababababababababbb",
-		"babababababababababababababababababababababababababababababababababababababababababababababababaaaba",
-		"abababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababbb"))
+	fmt.Println(isSubsequence("abc", "ahbgdc"))
+	fmt.Println(isSubsequence("axc", "ahbgdc"))
 
-	fmt.Println(isInterleave("aabaac", "aaf", "aabaafaac"))
-	fmt.Println(isInterleave("aabaac", "aadaaeaaf", "aadaaeaabaafaac"))
+	//s := "Hello, 世界!"
+	//for i, r := range s {
+	//	fmt.Printf("%d: %c\n", i, r)
+	//}
+	// Note the output:
+	//0: H
+	//1: e
+	//2: l
+	//3: l
+	//4: o
+	//5: ,
+	//6:
+	//7: 世
+	//10: 界
+	//13: !
 
-	fmt.Println(isInterleave("aabd", "abdc", "aabdbadc"))
-	fmt.Println(isInterleave("aa", "ab", "abaa"))
-	fmt.Println(isInterleave("a", "", "c"))
-	fmt.Println(isInterleave("aabcc", "dbbca", "aadbbcbcac"))
-	fmt.Println(isInterleave("aabcc", "dbbca", "aadbbbaccc"))
-	fmt.Println(isInterleave("", "", ""))
+	//fmt.Println(isInterleave("abababababababababababababababababababababababababababababababababababababababababababababababababbb",
+	//	"babababababababababababababababababababababababababababababababababababababababababababababababaaaba",
+	//	"abababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababababbb"))
+	//
+	//fmt.Println(isInterleave("aabaac", "aaf", "aabaafaac"))
+	//fmt.Println(isInterleave("aabaac", "aadaaeaaf", "aadaaeaabaafaac"))
+	//
+	//fmt.Println(isInterleave("aabd", "abdc", "aabdbadc"))
+	//fmt.Println(isInterleave("aa", "ab", "abaa"))
+	//fmt.Println(isInterleave("a", "", "c"))
+	//fmt.Println(isInterleave("aabcc", "dbbca", "aadbbcbcac"))
+	//fmt.Println(isInterleave("aabcc", "dbbca", "aadbbbaccc"))
+	//fmt.Println(isInterleave("", "", ""))
 
 	//fmt.Println(lengthOfLongestSubstring("abcb"))
 	//fmt.Println(minFlipsMonoIncr("00110"))

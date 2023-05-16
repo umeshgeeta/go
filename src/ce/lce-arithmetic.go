@@ -5,7 +5,10 @@
 
 package main
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 /*
  * LeetCode no. 2591: Distribute Money to Maximum Children
@@ -118,4 +121,46 @@ func bulbSwitch(n int) int {
 	// the square root of n gives us the largest number whose square is less than or equal to n.
 	// Hence, sqrt(n) is our answer to this problem.
 	return int(math.Floor(math.Sqrt(float64(n))))
+}
+
+// LeetCode problem no. 1137: N-th Tribonacci Number
+// https://leetcode.com/problems/n-th-tribonacci-number/description/
+//
+// The Tribonacci sequence Tn is defined as follows:
+//
+// T0 = 0, T1 = 1, T2 = 1, and Tn+3 = Tn + Tn+1 + Tn+2 for n >= 0.
+//
+// Given n, return the value of Tn.
+// Constraints:
+//
+// 0 <= n <= 37
+// The answer is guaranteed to fit within a 32-bit integer, ie. answer <= 2^31 - 1.
+func tribonacci(n int) int {
+	switch n {
+	case 0:
+		return 0
+	case 1:
+		return 1
+	case 2:
+		return 1
+	default:
+		tim3 := 0
+		tim2 := 1
+		tim1 := 1
+		ti := 0
+		i := 3
+		for i <= n {
+			ti = tim1 + tim2 + tim3
+			tim3 = tim2
+			tim2 = tim1
+			tim1 = ti
+			i++
+		}
+		return ti
+	}
+}
+
+func main() {
+	fmt.Println(tribonacci(4))
+	fmt.Println(tribonacci(25))
 }
